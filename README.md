@@ -21,6 +21,3 @@ npm install
 ```
 npm run serve
 ```
-
-### 本项目主要借鉴了StudentDormitoryManagementSystem
-https://github.com/xianjuyao/StudentDormitoryManagementSystem
