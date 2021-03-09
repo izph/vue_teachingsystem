@@ -10,6 +10,7 @@ app.use("/public/", express.static(path.join(__dirname, "/uploads")));
 app.use(require("cors")());
 
 // parse application/x-www-form-urlencoded
+// extended: false 使用querystring方法处理参数    express中使用req.body
 app.use(bodyParser.urlencoded({ extended: false }));
 
 // parse application/json
@@ -22,5 +23,5 @@ require("./routers/adminSystem")(app);
 require("./routers/student")(app);
 
 app.listen(8888, () => {
-    console.log("server is running at http://127.0.0.1:8888");
+  console.log("server is running at http://127.0.0.1:8888");
 });

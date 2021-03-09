@@ -95,6 +95,7 @@ export default {
           this.$http.post("/admin/login", this.userInfo).then((res) => {
             if (res.data.status) {
               //执行成功
+              console.log(res.data.data);
               localStorage.setItem("token", res.data.data); //保存在本地
               this.$message.success("登录成功!");
               this.$router.push("/admin/index");
