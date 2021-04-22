@@ -57,7 +57,7 @@ export default {
 .home {
   width: 100%;
   height: 100%;
-  background: url(../../assets/showcase.png) no-repeat;
+  background: url(../../assets/huqlogo07.jpg);
   background-size: 100% 100%;
 }
 /*
@@ -86,7 +86,7 @@ export default {
 }
 .container {
   padding: 20px;
-  background-color: rgba(0, 0, 0, 0.7);
+  /* background-color: rgba(248, 242, 242, 0.7); */
   width: 100%;
   height: 100%;
   box-sizing: border-box;

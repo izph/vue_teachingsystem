@@ -10,29 +10,25 @@
       label-width="100px"
       class="demo-ruleForm"
     >
-      <el-form-item label="用户名" prop="username">
+      <el-form-item label="用户名" prop="user_name">
         <el-input
           type="text"
-          v-model="userInfo.username"
+          v-model="userInfo.user_name"
           autocomplete="off"
         ></el-input>
       </el-form-item>
 
-      <el-form-item label="头像">
-        <el-upload
-          class="avatar-uploader"
-          :action="$http.defaults.baseURL + '/admin/uploads'"
-          :show-file-list="false"
-          :headers="getAuthHeaders()"
-          :on-success="handleAvatarSuccess"
-        >
-          <img v-if="userInfo.avatar" :src="userInfo.avatar" class="avatar" />
-          <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-        </el-upload>
+      <el-form-item label="教工号" prop="staff_no">
+        <el-input
+          type="text"
+          v-model="userInfo.staff_no"
+          autocomplete="off"
+        ></el-input>
       </el-form-item>
+
       <el-form-item>
         <el-button type="primary" @click="submitForm('ruleForm')"
-          >更新</el-button
+          >确认修改</el-button
         >
         <el-button @click="resetForm('ruleForm')">重置</el-button>
       </el-form-item>
@@ -42,8 +38,8 @@
 
 <script>
 export default {
-  props: ["userInfo"],
   name: "AdminUserInfo",
+
   data() {
     let checkUserName = (rule, value, callback) => {
       if (value.trim() === "") {
@@ -53,19 +49,23 @@ export default {
       }
     };
     return {
+      userInfo: {
+        user_name: sessionStorage.getItem("user_name"),
+        staff_no: sessionStorage.getItem("staff_no"),
+      },
       rules: {
-        username: [
+        user_name: [
           { validator: checkUserName, trigger: "blur" },
           { min: 2, max: 8, message: "用户名在2-8个字符之间", trigger: "blur" },
+        ],
+        staff_no: [
+          { validator: checkUserName, trigger: "blur" },
+          { min: 6, max: 8, message: "教工号在6-8个数字之间", trigger: "blur" },
         ],
       },
     };
   },
   methods: {
-    handleAvatarSuccess(res) {
-      console.log(res);
-      this.userInfo.avatar = res.url;
-    },
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {

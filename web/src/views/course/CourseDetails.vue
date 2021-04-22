@@ -8,7 +8,33 @@
     </el-breadcrumb> -->
 
     <!-- 卡片视图区域 -->
+
     <el-card>
+      <el-card class="box-card">
+        <div slot="header" class="clearfix">
+          <span class="coursename">{{ coursedetails.coursename }}</span>
+          <!-- <el-button
+            style="float: right; padding: 3px 0"
+            type="text"
+            @click="toCourseDetails"
+            >课程详情</el-button
+          > -->
+        </div>
+        <div class="text item">
+          <span class="classname">{{
+            "班级名称: " + coursedetails.classname
+          }}</span>
+          <span class="classsize">{{
+            "班级人数: " + coursedetails.classsize
+          }}</span>
+          <span class="classtime">{{
+            "上课时间: " + coursedetails.classtime
+          }}</span>
+          <span class="classlocation">{{
+            "上课地点: " + coursedetails.classlocation
+          }}</span>
+        </div>
+      </el-card>
       <!-- 搜索与添加区域 -->
       <el-row :gutter="20">
         <el-col :span="8">
@@ -209,7 +235,16 @@
 export default {
   data() {
     return {
+      // 获取获取课程详细信息
+      coursedetails: [],
       // 获取用户列表的参数对象
+      items: [
+        { type: "", label: "标签一" },
+        { type: "success", label: "标签二" },
+        { type: "info", label: "标签三" },
+        { type: "danger", label: "标签四" },
+        { type: "warning", label: "标签五" },
+      ],
       queryInfo: {
         query: "",
         // 当前的页数
@@ -296,6 +331,8 @@ export default {
   created() {
     // this.getStudentList();
     this.pageInation(this.queryInfo.pagenum, this.queryInfo.pagesize);
+
+    this.getcourseList();
   },
   methods: {
     async getStudentList() {
@@ -315,9 +352,21 @@ export default {
       //   console.log(res);
     },
 
+    async getcourseList() {
+      //   console.log("hahahahah");
+      const { data: res } = await this.$http.get(
+        "http://127.0.0.1:8888/api/admin/user/userinfo"
+      );
+      // console.log(data.demoLis);
+      console.log(this.$route.params.id);
+      console.log(res.data, 1);
+      this.coursedetails = res.data.data[this.$route.params.id - 1];
+      console.log(this.coursedetails);
+    },
+
     // 监听 switch 开关状态的改变
     async userStateChanged(userinfo) {
-      console.log(userinfo);
+      // console.log(userinfo);
       const { data: res } = await this.$http.put(
         `users/${userinfo.id}/state/${userinfo.mg_state}`
       );
@@ -336,12 +385,12 @@ export default {
       this.$refs.addFormRef.validate(async (valid) => {
         if (!valid) return;
         // 可以发起添加用户的网络请求
-        console.log(this.addForm);
+        //console.log(this.addForm);
         const { data: res } = await this.$http.post(
           "http://127.0.0.1:8888/api/admin/addmystudent",
           this.addForm
         );
-        console.log(res);
+        //console.log(res);
         // if (res.meta.status !== 201) {
         //   this.$message.error("添加用户失败！");
         // }
@@ -457,7 +506,7 @@ export default {
         "http://127.0.0.1:8888/api/admin/searchstudentList?currentquery=" +
           query
       );
-      console.log(res);
+      // console.log(res);
       this.studentlist = res.data;
       this.queryInfo.total = res.data.length;
     },
@@ -466,4 +515,18 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.box-card {
+  margin-bottom: 20px;
+}
+.clearfix {
+  text-align: center;
+  font-size: 20px;
+}
+.text {
+  font-size: 20px;
+  display: flex;
+  justify-content: space-around;
+  span {
+  }
+}
 </style>

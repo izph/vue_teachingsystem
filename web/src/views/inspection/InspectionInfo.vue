@@ -29,41 +29,54 @@
           <el-button type="primary" @click="addDialogVisible = true"
             >添加用户</el-button
           >
+        </el-col>
+        <el-col :span="4">
           <el-button type="success" @click="exportExcel">导出数据</el-button>
         </el-col>
       </el-row>
 
       <!-- 用户列表区域 -->
-      <el-table :data="studentlist" border stripe current-row-key>
+      <el-table :data="InspectionInfo" border stripe current-row-key>
         <el-table-column
           type="index"
           align="center"
           label="序号"
+          width="60"
         ></el-table-column>
         <el-table-column
           label="姓名"
-          prop="studyname"
+          prop="student_name"
           align="center"
         ></el-table-column>
         <el-table-column
           label="学号"
-          prop="studyno"
+          prop="student_no"
           align="center"
           sortable
         ></el-table-column>
         <el-table-column
-          label="性别"
-          prop="sex"
+          label="课程名称"
+          prop="course_name"
           align="center"
         ></el-table-column>
         <el-table-column
-          label="点名"
-          prop="rollcall"
+          label="上课时间"
+          prop="time_frame"
           align="center"
         ></el-table-column>
         <el-table-column
-          label="抽查"
-          prop="spotcheck"
+          label="weekday"
+          prop="weekday"
+          align="center"
+        ></el-table-column>
+        <el-table-column
+          label="第几周"
+          prop="week"
+          align="center"
+        ></el-table-column>
+        <el-table-column
+          label="抽查得分"
+          prop="score"
           align="center"
         ></el-table-column>
         <el-table-column label="操作" align="center">
@@ -101,8 +114,6 @@
               >
             </el-popconfirm>
           </template>
-        </el-table-column>
-        <el-table-column label="备注" width="180px" align="center">
         </el-table-column>
       </el-table>
 
@@ -218,7 +229,38 @@ export default {
         pagesize: 5,
         total: 0,
       },
-      studentlist: [],
+      InspectionInfo: [
+        {
+          student_name: "叶敏", //姓名
+          score: 6, //抽查得分
+          student_no: "2017000201", //学号
+          week: 9, //第几周
+          course_name: "计算机网路", //课程名称
+          time_frame: "1-2节", //上课时段
+          weekday: "Mon", //周几
+          id: 1, //数据id
+        },
+        {
+          student_name: "叶敏", //姓名
+          score: 6, //抽查得分
+          student_no: "2017000201", //学号
+          week: 9, //第几周
+          course_name: "计算机网路", //课程名称
+          time_frame: "1-2节", //上课时段
+          weekday: "Mon", //周几
+          id: 1, //数据id
+        },
+        {
+          student_name: "叶敏", //姓名
+          score: 6, //抽查得分
+          student_no: "2017000201", //学号
+          week: 9, //第几周
+          course_name: "计算机网路", //课程名称
+          time_frame: "1-2节", //上课时段
+          weekday: "Mon", //周几
+          id: 1, //数据id
+        },
+      ],
 
       // 控制添加用户对话框的显示与隐藏
       addDialogVisible: false,
@@ -295,7 +337,7 @@ export default {
   },
   created() {
     // this.getStudentList();
-    this.pageInation(this.queryInfo.pagenum, this.queryInfo.pagesize);
+    // this.pageInation(this.queryInfo.pagenum, this.queryInfo.pagesize);
   },
   methods: {
     async getStudentList() {
@@ -371,9 +413,9 @@ export default {
     // 展示编辑用户的对话框
     async showEditDialog(studyno) {
       console.log(studyno);
-      const { data: res } = await this.$http.get(
-        `http://127.0.0.1:8888/api/admin/getupdatemystudent/${studyno}`
-      );
+      // const { data: res } = await this.$http.get(
+      //   `http://127.0.0.1:8888/api/admin/getupdatemystudent/${studyno}`
+      // );
 
       //   if (res.meta.status !== 200) {
       //     return this.$message.error("查询用户信息失败！");
@@ -391,10 +433,10 @@ export default {
       this.$refs.editFormRef.validate(async (valid) => {
         if (!valid) return;
         // 发起修改学生信息的数据请求
-        const { data: res } = await this.$http.put(
-          `http://127.0.0.1:8888/api/admin/updatemystudent`,
-          this.editForm
-        );
+        // const { data: res } = await this.$http.put(
+        //   `http://127.0.0.1:8888/api/admin/updatemystudent`,
+        //   this.editForm
+        // );
         if (!res.status) {
           // 提示修改失败
           return this.$message.error("更新学生信息失败！");
@@ -422,33 +464,33 @@ export default {
       this.pageInation(this.queryInfo.pagenum, this.queryInfo.pagesize);
     },
     // 分页信息
-    async pageInation(pagenum, pagesize) {
-      pagenum = pagenum ? pagenum : this.queryInfo.pagenum;
-      pagesize = pagesize ? pagesize : this.queryInfo.pagesize;
-      let that = this;
-      //每次点击更改页码值
-      console.log(pagenum);
-      console.log(pagesize);
-      const { data: res } = await this.$http.get(
-        "http://127.0.0.1:8888/api/admin/studentListPage?currentPage=" +
-          pagenum +
-          "&pageSize=" +
-          pagesize
-      );
-      // .then((res) => {
-      //   if (res.data.data == null || res.data.data.length == 0) {
-      //     //除第一页的其他某页全都删除了的情况：
-      //     that.page.current = that.page.current - 1;
-      //     that.pageInation();
-      //   } else {
-      //     that.studentList = res.data.data;
-      //     that.queryInfo.total = res.data.total;
-      //   }
-      // });
-      console.log(res);
-      this.studentlist = res.data.data;
-      this.queryInfo.total = res.data.total;
-    },
+    // async pageInation(pagenum, pagesize) {
+    //   pagenum = pagenum ? pagenum : this.queryInfo.pagenum;
+    //   pagesize = pagesize ? pagesize : this.queryInfo.pagesize;
+    //   let that = this;
+    //   //每次点击更改页码值
+    //   console.log(pagenum);
+    //   console.log(pagesize);
+    //   const { data: res } = await this.$http.get(
+    //     "http://127.0.0.1:8888/api/admin/studentListPage?currentPage=" +
+    //       pagenum +
+    //       "&pageSize=" +
+    //       pagesize
+    //   );
+    //   // .then((res) => {
+    //   //   if (res.data.data == null || res.data.data.length == 0) {
+    //   //     //除第一页的其他某页全都删除了的情况：
+    //   //     that.page.current = that.page.current - 1;
+    //   //     that.pageInation();
+    //   //   } else {
+    //   //     that.studentList = res.data.data;
+    //   //     that.queryInfo.total = res.data.total;
+    //   //   }
+    //   // });
+    //   console.log(res);
+    //   this.studentlist = res.data.data;
+    //   this.queryInfo.total = res.data.total;
+    // },
     clearStudentList() {
       this.pageInation(this.queryInfo.pagenum, this.queryInfo.pagesize);
     },
@@ -466,4 +508,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.el-col {
+  text-align: center;
+}
 </style>

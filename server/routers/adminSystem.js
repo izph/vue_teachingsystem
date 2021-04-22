@@ -13,6 +13,11 @@ const { authAdmin } = require("../utils/auth");
 const path = require("path");
 const multer = require('multer');
 const upload = multer({ dest: path.join(__dirname, "../uploads") });
+
+const fs = require('fs')
+const JSON5 = require('json5');
+const { json } = require("body-parser");
+
 //const mongoose = require("../utils/db");
 
 module.exports = function (app) {
@@ -171,6 +176,18 @@ module.exports = function (app) {
     res.json(com(true, "", ssl));
 
   });
+
+  // router.get('/user/userinfo', authAdmin, async (req, res) => {
+  //   const file = path.join(__dirname, '/user.json');
+  //   const data = await fs.readFile(file, 'utf-8', (err, res) => {
+  //     if (err) { throw err }
+  //     console.log(res);
+  //     return res
+  //   })
+  //   res.json(com(true, "", data));
+
+  // })
+
 
   //挂载路由
   app.use("/api/admin", router);
