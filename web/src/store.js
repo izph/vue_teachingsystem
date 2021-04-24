@@ -9,6 +9,9 @@ export default new Vuex.Store({
       // id: '',
       // user_name: '',
       // staff_no: ''
+    },
+    class_no_name: {
+
     }
   },
   mutations: {

@@ -6,7 +6,7 @@
       <el-row :gutter="4">
         <el-col :span="4">
           <el-button type="primary" @click="addUserInfo">添加用户</el-button>
-          <el-button type="success" @click="exportExcel">导出数据</el-button>
+          <!-- <el-button type="success" @click="exportExcel">导出数据</el-button> -->
         </el-col>
       </el-row>
 
@@ -18,6 +18,8 @@
         class="user-table"
         stripe
         current-row-key
+        :cell-style="cellStyle"
+        @cell-dblclick="handleCelldblclick"
       >
         <el-table-column type="index" width="80" label="序号" align="center">
         </el-table-column>
@@ -29,12 +31,32 @@
           width="180"
           align="center"
         >
+          <!-- class-name="class_user_name" -->
+          <template slot-scope="scope">
+            <el-form :model="scope.row">
+              <el-form-item size="mini">
+                <el-input
+                  v-if="scope.row.isOK"
+                  v-model="scope.row.user_name"
+                  style="width: 100%; hight: 100%"
+                ></el-input>
+                <span v-else>{{ scope.row.user_name }}</span>
+              </el-form-item>
+            </el-form>
+          </template>
         </el-table-column>
         <el-table-column prop="staff_no" label="教工号" align="center">
         </el-table-column>
         <!-- <el-table-column prop="passwd" label="密码" align="center">
         </el-table-column> -->
         <el-table-column prop="remark" label="备注" align="center">
+          <template slot-scope="scope">
+            <el-tag
+              :type="scope.row.remark === 'admin' ? 'parmiy' : 'info'"
+              disable-transitions
+              >{{ scope.row.remark == "admin" ? "管理员" : "普通用户" }}</el-tag
+            >
+          </template>
         </el-table-column>
         <el-table-column label="操作用户信息" align="center">
           <template slot-scope="scope">
@@ -63,6 +85,24 @@
                 size="small"
                 slot="reference"
                 >删除</el-button
+              >
+            </el-popconfirm>
+
+            <el-popconfirm
+              confirm-button-text="确定"
+              cancel-button-text="取消"
+              icon="el-icon-info"
+              icon-color="red"
+              title="确定查看用户个人信息吗？"
+              style="margin: 0 15px"
+              @confirm="toUserInfo(scope.row.id)"
+            >
+              <el-button
+                type="success"
+                icon="el-icon-s-custom"
+                size="small"
+                slot="reference"
+                >查看用户具体信息</el-button
               >
             </el-popconfirm>
           </template>
@@ -102,8 +142,15 @@
         <el-form-item label="用户名" prop="user_name">
           <el-input type="text" v-model="editForm.user_name"></el-input>
         </el-form-item>
+        <el-form-item label="教工号" prop="staff_no">
+          <el-input type="text" v-model="editForm.staff_no" disabled></el-input>
+        </el-form-item>
         <el-form-item label="密码" prop="passwd">
           <el-input type="text" v-model="editForm.passwd"></el-input>
+        </el-form-item>
+
+        <el-form-item label="备注" prop="remark">
+          <el-input type="text" v-model="editForm.remark" disabled></el-input>
         </el-form-item>
       </el-form>
       <!-- 底部区域 -->
@@ -123,8 +170,9 @@ export default {
       // 查询到的用户信息对象
       editForm: {
         user_name: "",
-        staff_no: "",
+        // staff_no: "",
         passwd: "",
+        remark: "",
       },
       // 修改表单的验证规则对象
       editFormRules: {
@@ -141,6 +189,13 @@ export default {
           {
             required: true,
             message: "请输入要修改的用户密码",
+            trigger: "blur",
+          },
+        ],
+        remark: [
+          {
+            required: true,
+            message: "请输入备注",
             trigger: "blur",
           },
         ],
@@ -170,6 +225,41 @@ export default {
     };
   },
   methods: {
+    // 双击
+    handleCelldblclick(row, column, cell, event) {
+      console.log(row); // id: 1  staff_no: "00000001"  user_name: "王利"
+
+      row.isOK = !row.isOK;
+
+      if (row.isOK === false) {
+        // 双击修改用户名
+        console.log(1);
+      }
+      // this.$http
+      //   .post("/api/cms/user/1?_method=POST", [
+      //     {
+      //       user_name: this.form.user_name,
+      //       staff_no: this.form.staff_no,
+      //       passwd: this.form.passwd,
+      //       remark: this.form.remark,
+      //     },
+      //   ])
+      //   .then((res) => {
+      //     if (res.data.update === 1) {
+      //       this.$message.success("添加成功!");
+      //       this.$refs["form"].resetFields();
+      //     } else {
+      //       this.$message("添加失败");
+      //     }
+      //   })
+    },
+    //第三列  用户名设置为小手
+    cellStyle(data) {
+      if (data.columnIndex === 2) {
+        return "cursor:pointer;";
+      }
+    },
+
     clearuserList() {},
     exportExcel() {},
     handleSizeChange: function (size) {
@@ -187,6 +277,9 @@ export default {
     addUserInfo() {
       this.$router.push("/admin/user/add");
     },
+    toUserInfo(id) {
+      this.$router.push("");
+    },
     async editUser() {
       this.$refs.editFormRef.validate(async (valid) => {
         if (!valid) return;
@@ -198,10 +291,11 @@ export default {
               user_name: this.editForm.user_name,
               staff_no: this.editForm.staff_no,
               passwd: this.editForm.passwd,
+              remark: this.editForm.remark,
             },
           ])
           .then((res) => {
-            console.log(res);
+            //console.log(res);
             if (!res.status) {
               this.$message("更新用户失败！");
             }
@@ -215,28 +309,45 @@ export default {
       });
     },
     showEditDialog(row) {
-      this.editForm.user_name = row.user_name;
-      this.editForm.staff_no = row.staff_no;
-      this.editDialogVisible = true;
+      var remark = sessionStorage.getItem("remark");
+      var sta_no = sessionStorage.getItem("staff_no");
+      if (remark == "admin" || sta_no == row.staff_no) {
+        this.editDialogVisible = true;
+        this.editForm.user_name = row.user_name;
+        this.editForm.staff_no = row.staff_no;
+        this.editForm.remark = row.remark;
+      } else {
+        this.$message.error("非管理员禁止修改其他用户信息！");
+      }
     },
     async removeUserInfo(id) {
-      console.log(id);
-      await this.$http
-        .post(`/api/cms/user/1?_method=DELETE&id=${id}`)
-        .then((res) => {
-          //console.log(res);
-          if (res.status === 200) {
-            console.log("修改成功！");
-            this.getUserInfo();
-          }
-        });
+      var remark = sessionStorage.getItem("remark");
+
+      if (remark == "admin") {
+        //console.log(id);
+        await this.$http
+          .post(`/api/cms/user/1?_method=DELETE&id=${id}`)
+          .then((res) => {
+            //console.log(res);
+            if (res.status === 200) {
+              this.getUserInfo();
+            }
+          });
+      } else {
+        this.$message.error("非管理员禁止删除用户信息！");
+      }
     },
     async getUserInfo() {
       await this.$http.post("/api/cms/user/1?_method=GET").then((res) => {
         console.log(res);
         if (res.status === 200) {
-          this.tableData = res.data.data;
+          var datalist = [];
+          datalist = res.data.data;
           this.queryInfo.total = res.data.total;
+          datalist.forEach(function (item) {
+            item.isOK = false;
+          });
+          this.tableData = datalist;
           console.log(this.tableData);
         }
       });
@@ -253,5 +364,9 @@ export default {
   height: 100%;
 }
 .user-table {
+}
+.class_user_name {
+  cursor: pointer;
+  color: aqua;
 }
 </style>

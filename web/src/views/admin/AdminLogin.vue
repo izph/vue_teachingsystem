@@ -114,15 +114,15 @@ export default {
     return {
       loginForm: {
         username: "00000001",
-        password: "6LH60uSa",
+        password: "123456",
       },
       loginRules: {
         username: [
           { validator: validUserName, trigger: "blur" },
           {
-            min: 2,
-            max: 8,
-            message: "用户名长度在2-8个字符之间",
+            min: 7,
+            max: 12,
+            message: "用户名长度在7-12个字符之间",
             trigger: "blur",
           },
         ],
@@ -161,7 +161,7 @@ export default {
             .then((res) => {
               console.log(res);
 
-              if (res.status) {
+              if (res.status && res.data.state === "true") {
                 //执行成功
                 // console.log(res.headers.token);
                 sessionStorage.setItem("staff_no", this.loginForm.username); //保存在本地

@@ -1,29 +1,28 @@
 <template>
   <div class="app-container">
-    <el-form-item>
+    <el-card>
       <h2 class="add-title">添加用户信息</h2>
-    </el-form-item>
 
-    <el-form
-      class="add-form"
-      ref="form"
-      :model="form"
-      label-width="120px"
-      :rules="rules"
-    >
-      <el-form-item label="用户名" prop="user_name">
-        <el-input v-model="form.user_name" />
-      </el-form-item>
-      <el-form-item label="教工号" prop="staff_no">
-        <el-input v-model="form.staff_no" />
-      </el-form-item>
-      <el-form-item label="密码" prop="passwd">
-        <el-input v-model="form.passwd" />
-      </el-form-item>
-      <el-form-item label="备注" prop="remark">
-        <el-input v-model="form.remark" />
-      </el-form-item>
-      <!-- <el-form-item label="备注">
+      <el-form
+        class="add-form"
+        ref="form"
+        :model="form"
+        label-width="120px"
+        :rules="rules"
+      >
+        <el-form-item label="用户名" prop="user_name">
+          <el-input v-model="form.user_name" />
+        </el-form-item>
+        <el-form-item label="教工号" prop="staff_no">
+          <el-input v-model="form.staff_no" />
+        </el-form-item>
+        <el-form-item label="密码" prop="passwd">
+          <el-input v-model="form.passwd" />
+        </el-form-item>
+        <el-form-item label="备注" prop="remark">
+          <el-input v-model="form.remark" />
+        </el-form-item>
+        <!-- <el-form-item label="备注">
         <el-select v-model="form.remark" placeholder="备注" style="width: 100%">
           <el-option
             v-for="item in remarkInfo"
@@ -33,11 +32,12 @@
           ></el-option>
         </el-select>
       </el-form-item> -->
-      <el-form-item class="addform-button">
-        <el-button type="primary" @click="onSubmit">添加</el-button>
-        <el-button @click="resetForm('form')">重置</el-button>
-      </el-form-item>
-    </el-form>
+        <center>
+          <el-button type="primary" @click="onSubmit">添加</el-button>
+          <el-button @click="resetForm('form')">重置</el-button>
+        </center>
+      </el-form>
+    </el-card>
   </div>
 </template>
 
@@ -72,28 +72,35 @@ export default {
   methods: {
     // 获取学院列表
     getDepartmentList() {},
-    onSubmit() {
-      console.log(this.form);
-      this.$http
-        .post("/api/cms/user/1?_method=POST", [
-          {
-            user_name: this.form.user_name,
-            staff_no: this.form.staff_no,
-            passwd: this.form.passwd,
-            remark: this.form.remark,
-          },
-        ])
-        .then((res) => {
-          if (res.data.update === 1) {
-            this.$message.success("添加成功!");
-            this.$refs["form"].resetFields();
-          } else {
-            this.$message("添加失败");
-          }
-        })
-        .catch((err) => {
-          console.log(err);
+    async onSubmit() {
+      var remark = sessionStorage.getItem("remark");
+      if (remark == "admin") {
+        await this.$http
+          .post("/api/cms/user/1?_method=POST", [
+            {
+              user_name: this.form.user_name,
+              staff_no: this.form.staff_no,
+              passwd: this.form.passwd,
+              remark: this.form.remark,
+            },
+          ])
+          .then((res) => {
+            if (res.data.update === 1) {
+              this.$message.success("添加成功!");
+              this.$refs["form"].resetFields();
+            } else {
+              this.$message("添加失败");
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      } else {
+        this.$message({
+          type: "warning",
+          message: "非管理员禁止添加用户信息！",
         });
+      }
     },
     resetForm(formName) {
       this.$refs[formName].resetFields();

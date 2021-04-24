@@ -4,9 +4,9 @@
       <el-card class="box-card">
         <div slot="header" class="clearfix">
           <span>添加课程</span>
-          <el-button style="float: right; padding: 3px 0" type="text"
+          <!-- <el-button style="float: right; padding: 3px 0" type="text"
             >确定添加</el-button
-          >
+          > -->
         </div>
 
         <el-form
@@ -29,7 +29,16 @@
           </el-form-item>
 
           <el-form-item label="班级编号" prop="class_no">
-            <el-input v-model="ruleForm.class_no"></el-input>
+            <!-- <el-input v-model="ruleForm.class_no"></el-input> -->
+            <el-select v-model="ruleForm.class_no" placeholder="请选择班级">
+              <el-option
+                v-for="item in options"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              >
+              </el-option>
+            </el-select>
           </el-form-item>
 
           <el-form-item label="开始时间" prop="start_time">
@@ -52,6 +61,8 @@
 
           <el-form-item label="结束时间" prop="end_time">
             <el-select v-model="ruleForm.end_time" placeholder="请选择结束周数">
+              <el-option label="第七周" value="7"></el-option>
+              <el-option label="第八周" value="8"></el-option>
               <el-option label="第九周" value="9"></el-option>
               <el-option label="第十周" value="10"></el-option>
               <el-option label="第十一周" value="11"></el-option>
@@ -71,6 +82,9 @@
               <el-option label="2021" value="2021"></el-option>
               <el-option label="2022" value="2022"></el-option>
               <el-option label="2023" value="2023"></el-option>
+              <el-option label="2024" value="2024"></el-option>
+              <el-option label="2025" value="2025"></el-option>
+              <el-option label="2026" value="2026"></el-option>
             </el-select>
           </el-form-item>
 
@@ -114,9 +128,9 @@
 
           <el-form-item label="课程状态" prop="state">
             <el-radio-group v-model="ruleForm.state">
-              <el-radio label="未开始"></el-radio>
-              <el-radio label="教学中"></el-radio>
-              <el-radio label="已结束"></el-radio>
+              <el-radio label="waiting">未开始</el-radio>
+              <el-radio label="ing">进行中</el-radio>
+              <el-radio label="end">已结束</el-radio>
             </el-radio-group>
           </el-form-item>
           <el-form-item label="备注" prop="remark">
@@ -135,24 +149,26 @@
 </template>
 
 <script>
+import { filterDate } from "../../network/formatDate.js";
 export default {
   data() {
     return {
       ruleForm: {
         course_no: "",
-        course_name: "植物学基础",
-        staff_no: "00000002",
+        course_name: "",
+        staff_no: sessionStorage.getItem("staff_no"),
         class_no: "20190002",
         year: "2020",
         semester: "春",
         credit: 3,
-        state: "ing",
-        start_time: 1,
-        end_time: 18,
-        start_date: "2021-03-01",
+        state: "waiting",
+        start_time: "",
+        end_time: "",
+        start_date: filterDate(new Date()),
         resultinput: false,
         remark: "test",
       },
+      options: [],
       rules: {
         name: [
           { required: true, message: "请输入活动名称", trigger: "blur" },
@@ -192,15 +208,62 @@ export default {
       },
     };
   },
+  created() {
+    this.getClassName();
+  },
   methods: {
+    async getClassName() {
+      await this.$http
+        .post("/api/cms/class/1?_method=GET&class_no=")
+        .then((res) => {
+          console.log(res);
+          if (res.status === 200) {
+            var list = res.data.data;
+
+            var class_options = [];
+            list.forEach(function (item, index) {
+              class_options[index] = {};
+
+              class_options[index].value = item.class_no;
+              class_options[index].label = item.class_name;
+            });
+
+            this.options = class_options;
+            // console.log(this.classlist);
+            console.log(this.options);
+          }
+        });
+    },
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
-        if (valid) {
-          alert("submit!");
-        } else {
-          console.log("error submit!!");
-          return false;
-        }
+        if (!valid) return;
+        // console.log(this.ruleForm);
+        this.$http
+          .post("/api/cms/curs/1?_method=POST", [
+            {
+              course_no: this.ruleForm.course_no,
+              course_name: this.ruleForm.course_name,
+              staff_no: this.ruleForm.staff_no,
+              class_no: this.ruleForm.class_no,
+              year: this.ruleForm.year,
+              semester: this.ruleForm.semester,
+              credit: this.ruleForm.credit,
+              state: this.ruleForm.state,
+              start_time: this.ruleForm.start_time,
+              end_time: this.ruleForm.end_time,
+              start_date: this.ruleForm.start_date,
+              resultinput: this.ruleForm.resultinput,
+              remark: this.ruleForm.remark,
+            },
+          ])
+          .then((res) => {
+            console.log(res);
+            this.$message({
+              message: "添加课程成功！",
+              type: "success",
+            });
+            this.resetForm("ruleForm");
+          });
       });
     },
     resetForm(formName) {

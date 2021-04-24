@@ -133,7 +133,7 @@
                 </el-menu-item>
                 <el-menu-item index="/admin/grade/add">
                   <i class="el-icon-menu"></i>
-                  添加成绩信息
+                  批量添加成绩
                 </el-menu-item>
               </el-menu-item-group>
             </el-submenu>
@@ -227,10 +227,14 @@
         </div>
       </div>
       <div class="layui-body">
-        <router-view :userInfo="userInfo" :key="$route.path" />
+        <router-view
+          :userInfo="userInfo"
+          :key="$route.path"
+          :classlist="classlist"
+        />
       </div>
       <div class="layui-footer" style="text-align: center">
-        Copyright © 2019-2021 项目小组
+        Copyright © 2020-2021 17信计项目小组
       </div>
     </div>
   </div>
@@ -248,6 +252,7 @@ export default {
       },
       userlist: [],
       userstaffno: "",
+      classlist: [],
     };
   },
   mounted() {
@@ -256,14 +261,17 @@ export default {
     // this.getdataList();
   },
   methods: {
-    async getdataList() {
-      //   console.log("hahahahah");
-      // const { data: res } = await this.$http.get(
-      //   "http://127.0.0.1:8888/api/admin/user/userinfo"
-      // );
-      // console.log(data.demoLis);
-      // console.log(res.data);
-      // this.coursedatalist = res.data.data;
+    async getUserRemark() {
+      var sta_no = sessionStorage.getItem("staff_no");
+      console.log(sta_no);
+      await this.$http.post("/api/cms/user/1?_method=GET").then((res) => {
+        var userdata = res.data.data;
+        var useritem = userdata.filter(function (item) {
+          return item.staff_no == sta_no;
+        });
+
+        sessionStorage.setItem("remark", useritem[0].remark);
+      });
     },
     logout() {
       //localStorage.removeItem("token"); //清除token
@@ -306,9 +314,30 @@ export default {
         }
       });
     },
+    async getClassName() {
+      await this.$http
+        .post("/api/cms/class/1?_method=GET&class_no=")
+        .then((res) => {
+          if (res.status === 200) {
+            var list = res.data.data;
+            var class_list = [];
+
+            list.forEach(function (item, index) {
+              class_list[index] = {};
+
+              class_list[index].value = item.class_no;
+              class_list[index].label = item.class_name;
+            });
+            this.classlist = class_list;
+            // console.log(this.classlist);
+          }
+        });
+    },
   },
   created() {
     this.fetchUserInfo();
+    this.getClassName();
+    this.getUserRemark();
   },
 };
 </script>

@@ -35,7 +35,7 @@
           <el-button type="primary" @click="addDialogVisible = true"
             >添加学生</el-button
           >
-          <el-button type="success" @click="exportExcel">导出数据</el-button>
+          <el-button type="success" @click="outExcel()">导出数据</el-button>
           <el-button type="danger" @click="getStudentList()"
             >显示所有学生</el-button
           >
@@ -59,7 +59,13 @@
       </el-row>
 
       <!-- 用户列表区域 -->
-      <el-table :data="studentlist" border stripe current-row-key>
+      <el-table
+        :data="studentlist"
+        border
+        stripe
+        current-row-key
+        id="out-table"
+      >
         <el-table-column
           type="index"
           align="center"
@@ -133,7 +139,7 @@
               icon="el-icon-info"
               icon-color="red"
               title="确定删除当前学生记录吗？"
-              @confirm="removeStudent(scope.row.student_no)"
+              @confirm="removeStudent(scope.row.id)"
             >
               <el-button
                 type="danger"
@@ -147,18 +153,19 @@
           </template>
         </el-table-column>
       </el-table>
-
-      <!-- 分页区域 -->
-      <el-pagination
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-        :current-page="pagenum"
-        :page-sizes="[5, 10, 20, 30, 50, 80, 100]"
-        :page-size="pagesize"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="total"
-      >
-      </el-pagination>
+      <div id="fixedCaed" :class="{ isFixed: fixed }">
+        <!-- 分页区域 -->
+        <el-pagination
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="pagenum"
+          :page-sizes="[5, 10, 20, 30, 50, 80, 100, 1000]"
+          :page-size="pagesize"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="total"
+        >
+        </el-pagination>
+      </div>
     </el-card>
 
     <!-- 修改学生信息 -->
@@ -176,39 +183,36 @@
         ref="editFormRef"
         label-width="70px"
       >
-        <el-form-item label="姓名" prop="student_name">
+        <el-form-item label="姓名">
           <el-input v-model="editForm.student_name"></el-input>
         </el-form-item>
-        <el-form-item label="学号" prop="student_no">
+        <el-form-item label="学号">
           <el-input v-model="editForm.student_no"></el-input>
         </el-form-item>
-        <el-form-item label="性别" prop="gender">
+        <el-form-item label="性别">
           <el-radio-group v-model="editForm.gender">
             <el-radio label="male">男</el-radio>
             <el-radio label="female">女</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="班级号" prop="class_no">
+        <el-form-item label="班级号">
           <el-input v-model="editForm.class_no"></el-input>
         </el-form-item>
-        <el-form-item label="备注" prop="remark">
-          <el-radio-group v-model="editForm.remark">
-            <el-radio label="admin">管理员(admin)</el-radio>
-            <el-radio label="test">测试(test)</el-radio>
-          </el-radio-group>
+        <el-form-item label="备注">
+          <el-input v-model="editForm.remark"></el-input>
         </el-form-item>
 
-        <el-card class="box-card">
+        <!-- <el-card class="box-card">
           <div v-for="item in options" :key="item.class_no" class="text item">
             {{ item.class_name + "---" + item.class_no }}
           </div>
-        </el-card>
+        </el-card> -->
       </el-form>
 
       <!-- 底部区域 -->
       <span slot="footer" class="dialog-footer">
         <el-button @click="editDialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="editStudent()">确 定</el-button>
+        <el-button type="primary" @click="editStudent">确 定</el-button>
       </span>
     </el-dialog>
 
@@ -227,21 +231,32 @@
         ref="addFormRef"
         label-width="70px"
       >
-        <el-form-item label="姓名" prop="student_name">
+        <el-form-item label="姓名" prop>
           <el-input v-model="addForm.student_name"></el-input>
         </el-form-item>
-        <el-form-item label="学号" prop="student_no">
+        <el-form-item label="学号" prop>
           <el-input v-model="addForm.student_no"></el-input>
         </el-form-item>
-        <el-form-item label="性别" prop="gender">
+        <el-form-item label="性别" prop>
           <el-radio-group v-model="addForm.gender">
-            <el-radio label="男"></el-radio>
-            <el-radio label="女"></el-radio>
+            <el-radio label="male">男</el-radio>
+            <el-radio label="female">女</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="班级" prop="class_name">
-          <el-input v-model="addForm.class_name"></el-input>
+        <el-form-item label="班级" prop>
+          <el-input v-model="addForm.class_no"></el-input>
         </el-form-item>
+
+        <el-form-item label="备注" prop>
+          <el-input v-model="addForm.remark"></el-input>
+        </el-form-item>
+
+        <!-- 班级信息卡 -->
+        <!-- <el-card class="box-card">
+          <div v-for="item in options" :key="item.class_no" class="text item">
+            {{ item.class_name + "---" + item.class_no }}
+          </div>
+        </el-card> -->
       </el-form>
       <!-- 底部区域 -->
       <span slot="footer" class="dialog-footer">
@@ -253,6 +268,9 @@
 </template>
 
 <script>
+import FileSaver from "file-saver";
+import XLSX from "xlsx";
+
 export default {
   data() {
     return {
@@ -282,7 +300,8 @@ export default {
         student_name: "",
         student_no: "",
         gender: "",
-        class_name: "",
+        class_no: "",
+        remark: "",
       },
       // 添加表单的验证规则对象
       addFormRules: {
@@ -296,58 +315,50 @@ export default {
         student_no: [
           { required: true, message: "请输入9位数的学号", trigger: "blur" },
           {
-            min: 9,
-            max: 9,
             message: "请输入9位数的学号",
             trigger: "blur",
           },
         ],
         gender: [{ required: true, trigger: "blur" }],
-        class_name: [
+        class_no: [
           { required: true, message: "请输入点名信息", trigger: "blur" },
           //   { validator: checkMobile, trigger: "blur" },
         ],
-      }, // 控制修改用户对话框的显示与隐藏
+        remark: [{ message: "请填写备注信息", trigger: "blur" }],
+      },
+      // 控制修改用户对话框的显示与隐藏
       editDialogVisible: false,
       // 查询到的用户信息对象
-      editForm: {
-        student_name: "",
-        student_no: "",
-        gender: "",
-        class_no: "",
-        remark: "",
-      },
+      editForm: {},
       // 修改表单的验证规则对象
       editFormRules: {
         student_name: [
           {
-            min: 2,
-            max: 6,
             required: true,
-            message: "姓名的长度在2~6个字符之间",
+            message: "请输入学生姓名",
+            trigger: "blur",
+          },
+          {
+            message: "姓名的长度在1~6个字符之间",
             trigger: "blur",
           },
         ],
         student_no: [
           {
-            min: 10,
-            max: 10,
             required: true,
             message: "请输入10位数的学号",
             trigger: "blur",
           },
         ],
-        gender: [{ required: true, message: "请选择备注", trigger: "blur" }],
+        gender: [{ required: true, trigger: "blur" }],
         class_no: [
           {
-            min: 8,
-            max: 8,
             required: true,
             message: "请输入8位班级编号",
             trigger: "blur",
           },
         ],
-        remark: [{ required: true, message: "请选择备注", trigger: "blur" }],
+        // remark: [{ required: true, message: "请选择备注", trigger: "blur" }],
       },
       // 控制分配角色对话框的显示与隐藏
       setRoleDialogVisible: false,
@@ -357,6 +368,12 @@ export default {
       rolesList: [],
       // 已选中的角色Id值
       selectedRoleId: "",
+      //
+      //initHeight: 0,
+      offsetTop: 0,
+      offsetWidth: 0,
+      colWidth: 0,
+      fixed: false,
     };
   },
   mounted() {
@@ -366,13 +383,71 @@ export default {
     // 计算得0时设置为1
     // this.total = this.total == 0 ? 1 : this.total;
     // this.handleSizeChange();
-  },
+    window.addEventListener("scroll", function () {
+      //兼容性，获取页面滚动距离
+      var scrollTop =
+        window.pageYOffset ||
+        document.documentElement.scrollTop ||
+        document.body.scrollTop;
 
+      console.log(scrollTop);
+    });
+
+    // DOM异步更新 对未来更新后的视图进行操作 在更新后执行
+    // this.$nextTick(() => {
+    //   //获取到达页面顶端的值
+    //   var height = document.getElementById("fixedCard");
+    //   this.offsetTop = height.offsetTop + 60;
+    //   //获取宽度
+    //   this.offsetWidth = height.offsetWidth;
+    //   console.log(1);
+    // });
+  },
+  destroyed() {
+    //移除监听
+    window.removeEventListener("scroll", this.initHeight);
+  },
   created() {
     this.getStudentList();
     this.getClassName();
   },
   methods: {
+    initHeight() {
+      //兼容性，获取页面滚动距离
+      var scrollTop =
+        window.pageYOffset ||
+        document.documentElement.scrollTop ||
+        document.body.scrollTop;
+
+      console.log(scrollTop);
+      //判断滚动距离是否大于元素到顶端距离
+
+      // this.fixed = scrollTop > this.offsetTop ? true : false;
+      // //宽度赋值
+      // document.getElementById("fixedCard").style.width =
+      //   this.offsetWidth + "px";
+    },
+
+    outExcel() {
+      console.log(1);
+      /* out-table关联导出的dom节点  */
+      var wb = XLSX.utils.table_to_book(document.querySelector("#out-table"));
+      /* get binary string as output */
+      var wbout = XLSX.write(wb, {
+        bookType: "xlsx",
+        bookSST: true,
+        type: "array",
+      });
+      try {
+        FileSaver.saveAs(
+          new Blob([wbout], { type: "application/octet-stream" }),
+          "学生信息.xlsx"
+        );
+      } catch (e) {
+        if (typeof console !== "undefined") console.log(e, wbout);
+      }
+      return wbout;
+    },
     // 监听 pagesize 改变的事件
     handleSizeChange(newSize) {
       this.pagesize = newSize;
@@ -388,12 +463,13 @@ export default {
     pageInation(pagenum, pagesize) {
       pagenum = pagenum ? pagenum : this.pagenum;
       pagesize = pagesize ? pagesize : this.pagesize;
-
+      this.total = this.allstudent.length - 1;
       //每次点击更改页码值
       let begin = (this.pagenum - 1) * this.pagesize;
       let end = this.pagenum * this.pagesize;
       this.studentlist = this.allstudent.slice(begin, end);
     },
+
     // 获取班级
     async getDesignatedClass(value) {
       console.log(value);
@@ -417,7 +493,7 @@ export default {
     filterHandler(value, row, column) {
       return row.class_name === value;
     },
-    exportExcel() {},
+
     async getClassName() {
       await this.$http
         .post("/api/cms/class/1?_method=GET&class_no=")
@@ -446,6 +522,11 @@ export default {
     },
     async getStudentList() {
       let that = this;
+      await this.$http
+        .post("/api/cms/stu/1?_method=GET&pagenum=1&pagesize=10")
+        .then((res) => {
+          console.log(res);
+        });
       await this.$http.post("/api/cms/stu/1?_method=GET").then((res) => {
         console.log(res);
         if (res.status === 200) {
@@ -489,43 +570,81 @@ export default {
         if (!valid) return;
         // 可以发起添加用户的网络请求
         console.log(this.addForm);
-        const { data: res } = await this.$http.post(
-          "http://127.0.0.1:8888/api/admin/addmystudent",
-          this.addForm
-        );
-        console.log(res);
-        // if (res.meta.status !== 201) {
-        //   this.$message.error("添加用户失败！");
-        // }
-
-        this.$message.success("添加用户成功！");
-        // 隐藏添加用户的对话框
-        this.addDialogVisible = false;
-        // 重新获取用户列表数据
-        this.getStudentList();
+        this.$http
+          .post("/api/cms/stu/1?_method=POST", [
+            {
+              student_name: this.addForm.student_name,
+              student_no: this.addForm.student_no,
+              class_no: this.addForm.class_no,
+              gender: this.addForm.gender,
+              remark: this.addForm.remark,
+            },
+          ])
+          .then((res) => {
+            if (res.status != 200) {
+              // 提示修改失败
+              return this.$message.error("更新学生信息失败！");
+            }
+            // 关闭对话框
+            this.addDialogVisible = false;
+            // 刷新数据列表
+            this.getStudentList();
+            // 提示修改成功
+            this.$message.success("添加学生信息成功！");
+          });
       });
     },
     // 删除学生
-    removeStudent(studyno) {
-      console.log(studyno);
-      this.$http
-        .delete(`http://127.0.0.1:8888/api/admin/removemystudent/${studyno}`)
-        .then(() => {
-          this.$message({
-            message: "删除学生信息成功",
-            type: "success",
-          });
-          // this.page.current = 1;
-          // 重新获取用户列表数据
-          this.getStudentList();
+    removeStudent(id) {
+      console.log(id);
+      this.$http.post(`/api/cms/stu/1?_method=DELETE&id=${id}`).then((res) => {
+        console.log(res);
+        this.$message({
+          message: "删除学生信息成功",
+          type: "success",
         });
+
+        // 重新获取用户列表数据
+        this.getStudentList();
+        this.pagenum = 1;
+        this.pageInation(this.pagenum, this.pagesize);
+      });
     },
     // 展示编辑用户的对话框
+    searchClassNo(classname) {
+      //console.log(classname);
+      var num = 0;
+      this.options.forEach(function (item) {
+        //console.log(item.class_name);
+        if (item.class_name == classname) {
+          num = item.class_no;
+        }
+      });
+      return num;
+    },
     async showEditDialog(row) {
-      console.log(row);
       this.editDialogVisible = true;
+      var stu_no = row.student_no;
+      //console.log(row.class_name);
 
-      this.editForm = row;
+      var cla_no = this.searchClassNo(row.class_name);
+      //console.log(cla_no);
+      await this.$http
+        .post(`/api/cms/stu/1?_method=GET&student_no=${stu_no}`)
+        .then((res) => {
+          console.log(res);
+          if (res.status === 200) {
+            // this.editForm.student_no = res.data.data[0].student_no;
+            // this.editForm.student_name = res.data.data[0].student_name;
+            // this.editForm.gender = res.data.data[0].gender;
+            this.editForm = res.data.data[0];
+          }
+          this.$set(this.editForm, "remark", "");
+          this.$set(this.editForm, "class_no", cla_no);
+          // this.editForm.remark = "";
+          // this.editForm.class_no = "";
+          console.log(this.editForm);
+        });
     },
     // 监听修改用户对话框的关闭事件
     editDialogClosed() {
@@ -533,25 +652,37 @@ export default {
     },
     // 修改用户信息并提交
     editStudent() {
-      this.$refs.editFormRef.validate(async (valid) => {
+      this.$refs.editFormRef.validate((valid) => {
         if (!valid) return;
         // 发起修改学生信息的数据请求
-        console.log(this.editForm);
-        // if (!res.status) {
-        //   // 提示修改失败
-        //   return this.$message.error("更新学生信息失败！");
-        // }
-        // 关闭对话框
-        this.editDialogVisible = false;
-        // 刷新数据列表
-        //this.getStudentList();
-        // 提示修改成功
-        //this.$message.success("更新学生信息成功！");
+        //console.log(this.editForm);
+        this.$http
+          .post("/api/cms/stu/1?_method=POST", [
+            {
+              student_name: this.editForm.student_name,
+              student_no: this.editForm.student_no,
+              class_no: this.editForm.class_no,
+              gender: this.editForm.gender,
+              remark: this.editForm.remark,
+            },
+          ])
+          .then((res) => {
+            if (res.status != 200) {
+              // 提示修改失败
+              return this.$message.error("更新学生信息失败！");
+            }
+            // 关闭对话框
+            this.editDialogVisible = false;
+            // 刷新数据列表
+            this.getStudentList();
+            // 提示修改成功
+            this.$message.success("更新学生信息成功！");
+          });
       });
     },
 
     clearStudentList() {
-      this.pageInation(this.queryInfo.pagenum, this.queryInfo.pagesize);
+      this.pageInation(this.pagenum, this.pagesize);
     },
     async searchStudentList(value) {
       console.log(value);
@@ -562,7 +693,7 @@ export default {
           console.log(res);
           if (res.status === 200) {
             this.studentlist = res.data.data;
-            this.queryInfo.total = res.data.total;
+            this.total = res.data.total;
             // console.log(this.tableData);
           }
         });
@@ -583,5 +714,10 @@ export default {
   margin: 20px 0 0 20px;
   font-size: 20px;
   vertical-align: center;
+}
+
+.isFixed {
+  position: fixed;
+  bottom: 0;
 }
 </style>

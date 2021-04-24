@@ -1,356 +1,678 @@
 <template>
-  <div class="app-container">
-    <el-form
-      class="demo-form-inline"
-      :inline="true"
-      :model="formInline"
-      size="mini"
-    >
-      <el-form-item label>
-        <el-select placeholder="查询类别" v-model="formInline.region">
-          <el-option label="课程名" value="course_name"></el-option>
-          <el-option label="综合成绩优秀以上" value="cname"></el-option>
-          <el-option label="综合成绩良好以上" value="cname"></el-option>
-          <el-option label="综合成绩及格以上" value="cname"></el-option>
-          <el-option label="综合成绩不及格" value="cname"></el-option>
-        </el-select>
-      </el-form-item>
-      <el-form-item label>
-        <el-input placeholder="查询条件" v-model="formInline.user"></el-input>
-      </el-form-item>
-      <el-form-item>
-        <el-button
-          type="primary"
-          plain
-          icon="el-icon-search"
-          @click="SearchHandle"
-        ></el-button>
-      </el-form-item>
-      <i class="opera" title="添加记录" @click="AddTeacherRow">添加记录</i>
-    </el-form>
-    <el-table
-      v-loading="listLoading"
-      :data="list.gradeinfo"
-      element-loading-text="Loading"
-      border
-      stripe
-      empty-text="无"
-      highlight-current-row
-      :default-sort="{ prop: 'id', order: 'undescending' }"
-      @selection-change="handleSelectionChange"
-    >
-      <el-table-column
-        type="selection"
-        align="center"
-        width="80"
-      ></el-table-column>
-      <el-table-column align="center" label="学生姓名" prop="id" width="120">
-        <template slot-scope="scope">{{ scope.row.student_name }}</template>
-      </el-table-column>
-      <el-table-column label="课程名字" width="200" align="center">
-        <template slot-scope="scope">{{ scope.row.course_name }}</template>
-      </el-table-column>
-      <el-table-column label="平时成绩" align="center" width="120">
-        <template slot-scope="scope">
-          <span>{{ scope.row.usual }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="期末成绩" align="center" width="120">
-        <template slot-scope="scope">
-          <span>{{ scope.row.end_of_term }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column
-        align="center"
-        prop="allgrade"
-        label="综合成绩"
-        width="120"
-        sortable
-      >
-        <template slot-scope="scope">{{
-          scope.row.usual * 0.3 + scope.row.end_of_term * 0.7
-        }}</template>
-      </el-table-column>
+  <div>
+    <!-- 面包屑导航区域 -->
+    <div class="breadcrumb">
+      <el-breadcrumb separator-class="el-icon-arrow-right">
+        <el-breadcrumb-item :to="{ path: '/admin/index' }"
+          >首页</el-breadcrumb-item
+        >
+        <el-breadcrumb-item>成绩信息管理</el-breadcrumb-item>
+        <el-breadcrumb-item>学生成绩列表</el-breadcrumb-item>
+      </el-breadcrumb>
+    </div>
 
-      <el-table-column label="成绩等级" align="center" width="130">
-        <template slot-scope="scope">
-          <span>{{
-            scope.row.usual * 0.3 + scope.row.end_of_term * 0.7 > 60
-              ? "及格"
-              : "不及格"
-          }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column
-        align="center"
-        prop="created_at"
-        label="操作"
-        width="150"
-      >
-        <template slot-scope="scope">
-          <el-button
-            icon="el-icon-edit"
-            type="primary"
-            circle
-            size="mini"
-            @click="handleEdit(scope.row)"
-            title="修改记录"
+    <!-- 卡片视图区域 -->
+    <el-card>
+      <!-- 搜索与添加区域 -->
+      <el-row :gutter="20">
+        <el-col :span="4">
+          <el-input
+            placeholder="请输入正确的学号搜索学生成绩"
+            v-model="queryInfo.query"
+            clearable
+            @clear="clearStudentList"
+          >
+            <el-button
+              slot="append"
+              icon="el-icon-search"
+              @click="searchStudentList(queryInfo.query)"
+            ></el-button>
+          </el-input>
+        </el-col>
+        <el-col :span="12">
+          <el-button type="primary" @click="addDialogVisible = true"
+            >添加学生</el-button
+          >
+          <el-button type="success" @click="exportExcel">导出数据</el-button>
+          <el-button type="danger" @click="getStudentList()"
+            >显示所有学生</el-button
+          >
+
+          <el-select
+            v-model="value"
+            filterable
+            placeholder="请选择课程名称"
             style="margin: 0 15px"
-          ></el-button>
-          <el-button
-            size="mini"
-            type="danger"
-            circle
-            icon="el-icon-delete"
-            @click="handleDelete(scope.row)"
-            title="删除记录"
-            style="margin: 0 15px"
-          ></el-button>
-        </template>
-      </el-table-column>
-    </el-table>
-    <div class="block">
+            @change="getDesignatedCourse(value)"
+          >
+            <el-option
+              v-for="item in options"
+              :key="item.course_no"
+              :label="item.course_name"
+              :value="item.course_no"
+            >
+            </el-option>
+          </el-select>
+        </el-col>
+      </el-row>
+
+      <!-- 成绩列表区域 -->
+      <el-table :data="gradeinfo" border stripe current-row-key>
+        <el-table-column
+          type="index"
+          align="center"
+          label="序号"
+          width="70px"
+        ></el-table-column>
+        <el-table-column
+          type="id"
+          align="center"
+          label="ID"
+          prop="id"
+          width="70px"
+        ></el-table-column>
+        <el-table-column
+          sortable
+          label="学生姓名"
+          prop="student_name"
+          align="center"
+        ></el-table-column>
+        <el-table-column
+          sortable
+          label="学号"
+          prop="student_no"
+          align="center"
+        ></el-table-column>
+        <el-table-column
+          label="课程名称"
+          prop="course_name"
+          align="center"
+          sortable
+        ></el-table-column>
+
+        <el-table-column label="平时成绩" align="center">
+          <template slot-scope="scope">
+            <span>{{ scope.row.usual }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="期末成绩" align="center">
+          <template slot-scope="scope">
+            <span>{{ scope.row.end_of_term }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          align="center"
+          prop="allgrade"
+          label="综合成绩"
+          sortable
+        >
+          <template slot-scope="scope">{{
+            (scope.row.usual * 0.3 + scope.row.end_of_term * 0.7).toFixed(2)
+          }}</template>
+        </el-table-column>
+
+        <el-table-column label="成绩等级" align="center">
+          <!-- <template slot-scope="scope">
+            <span>{{
+              scope.row.usual * 0.3 + scope.row.end_of_term * 0.7 > 60
+                ? "及格"
+                : "不及格"
+            }}</span>
+          </template> -->
+
+          <template slot-scope="scope">
+            <el-tag
+              :type="
+                filterColor(scope.row.usual * 0.3 + scope.row.end_of_term * 0.7)
+              "
+              disable-transitions
+              >{{
+                (scope.row.usual * 0.3 + scope.row.end_of_term * 0.7)
+                  | filterGrade
+              }}</el-tag
+            >
+          </template>
+        </el-table-column>
+
+        <el-table-column label="操作" align="center" width="300px">
+          <!-- <template slot-scope="scope">
+            <el-switch
+              v-model="scope.row.mg_state"
+              @change="userStateChanged(scope.row)"
+            >
+            </el-switch>
+          </template> -->
+          <template slot-scope="scope">
+            <!-- 修改按钮 -->
+            <el-button
+              type="primary"
+              icon="el-icon-edit"
+              size="medium"
+              @click="showEditDialog(scope.row)"
+              >修改</el-button
+            >
+            <!-- 删除按钮 -->
+            <el-popconfirm
+              confirm-button-text="确定"
+              cancel-button-text="取消"
+              style="margin: 0 15px"
+              size="medium"
+              icon="el-icon-info"
+              icon-color="red"
+              title="确定删除当前学生记录吗？"
+              @confirm="removeStudent(scope.row.id)"
+            >
+              <el-button
+                type="danger"
+                icon="el-icon-delete"
+                size="medium"
+                slot="reference"
+                style="margin: 0 15px"
+                >删除</el-button
+              >
+            </el-popconfirm>
+          </template>
+        </el-table-column>
+      </el-table>
+      <!-- 分页区域 -->
       <el-pagination
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
-        :current-page="currentPage"
-        :page-sizes="[10, 20, 50, 100]"
-        :page-size="10"
+        :current-page="pagenum"
+        :page-sizes="[5, 10, 20, 30, 50, 80, 100]"
+        :page-size="pagesize"
         layout="total, sizes, prev, pager, next, jumper"
-        :total="list.allCount"
-      ></el-pagination>
-    </div>
+        :total="total"
+      >
+      </el-pagination>
+    </el-card>
+
+    <!-- 修改学生信息 -->
+    <el-dialog
+      title="修改学生信息"
+      :visible.sync="editDialogVisible"
+      width="50%"
+      @close="editDialogClosed"
+      :append-to-body="true"
+    >
+      <!-- 内容主体区域 -->
+      <el-form
+        :model="editForm"
+        :rules="editFormRules"
+        ref="editFormRef"
+        label-width="70px"
+      >
+        <el-form-item label="姓名">
+          <el-input v-model="editForm.student_name"></el-input>
+        </el-form-item>
+        <el-form-item label="学号">
+          <el-input v-model="editForm.student_no"></el-input>
+        </el-form-item>
+        <el-form-item label="性别">
+          <el-radio-group v-model="editForm.gender">
+            <el-radio label="male">男</el-radio>
+            <el-radio label="female">女</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="班级号">
+          <el-input v-model="editForm.class_no"></el-input>
+        </el-form-item>
+        <el-form-item label="备注">
+          <el-input v-model="editForm.remark"></el-input>
+        </el-form-item>
+
+        <!-- <el-card class="box-card">
+          <div v-for="item in options" :key="item.class_no" class="text item">
+            {{ item.class_name + "---" + item.class_no }}
+          </div>
+        </el-card> -->
+      </el-form>
+
+      <!-- 底部区域 -->
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="editDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="editStudent">确 定</el-button>
+      </span>
+    </el-dialog>
+
+    <!-- 添加学生信息 -->
+    <el-dialog
+      title="添加学生"
+      :visible.sync="addDialogVisible"
+      width="50%"
+      @close="addDialogClosed"
+      :append-to-body="true"
+    >
+      <!-- 内容主体区域 -->
+      <el-form
+        :model="addForm"
+        :rules="addFormRules"
+        ref="addFormRef"
+        label-width="70px"
+      >
+        <el-form-item label="姓名" prop>
+          <el-input v-model="addForm.student_name"></el-input>
+        </el-form-item>
+        <el-form-item label="学号" prop>
+          <el-input v-model="addForm.student_no"></el-input>
+        </el-form-item>
+        <el-form-item label="性别" prop>
+          <el-radio-group v-model="addForm.gender">
+            <el-radio label="male">男</el-radio>
+            <el-radio label="female">女</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="班级" prop>
+          <el-input v-model="addForm.class_no"></el-input>
+        </el-form-item>
+
+        <el-form-item label="备注" prop>
+          <el-input v-model="addForm.remark"></el-input>
+        </el-form-item>
+
+        <!-- <el-card class="box-card">
+          <div v-for="item in options" :key="item.class_no" class="text item">
+            {{ item.class_name + "---" + item.class_no }}
+          </div>
+        </el-card> -->
+      </el-form>
+      <!-- 底部区域 -->
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="addDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="addStudent">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 export default {
+  filters: {
+    filterGrade(grade) {
+      if (grade >= 90) {
+        return "优秀";
+      } else if (grade >= 80 && grade < 90) {
+        return "良好";
+      } else if (grade >= 70 && grade < 80) {
+        return "一般";
+      } else if (grade >= 60 && grade < 70) {
+        return "及格";
+      } else {
+        return "不及格";
+      }
+    },
+  },
   data() {
     return {
-      list: {
-        allCount: 0,
-        gradeinfo: [
+      options: [],
+      value: "",
+      // 获取用户列表的参数对象
+      queryInfo: {
+        query: "",
+      },
+      // 当前的页数
+      pagenum: 1,
+      // 当前每页显示多少条数据
+      pagesize: 10,
+      total: 0,
+      count: 0,
+      // 当前页数据
+      gradeinfo: [],
+      // 后端返回的所有数据
+      allgrade: [],
+
+      designatedclass: [],
+      // 班级总数
+      courselist: [],
+      // 控制添加用户对话框的显示与隐藏
+      addDialogVisible: false,
+      // 添加用户的表单数据
+      addForm: {
+        student_name: "",
+        student_no: "",
+        gender: "",
+        class_no: "",
+        remark: "",
+      },
+      // 添加表单的验证规则对象
+      addFormRules: {
+        student_name: [
+          { required: true, message: "请输入学生姓名", trigger: "blur" },
           {
-            student_name: "叶敏", //学生姓名
-            usual: 88, //平时成绩
-            course_name: "计算机网路", //课程名
-            end_of_term: 82, //期末成绩
-            id: 1455, //id
-          },
-          {
-            student_name: "叶敏", //学生姓名
-            usual: 88, //平时成绩
-            course_name: "计算机网路", //课程名
-            end_of_term: 82, //期末成绩
-            id: 1455, //id
-          },
-          {
-            student_name: "叶敏", //学生姓名
-            usual: 98, //平时成绩
-            course_name: "计算机网路", //课程名
-            end_of_term: 95, //期末成绩
-            id: 1455, //id
-          },
-          {
-            student_name: "叶敏", //学生姓名
-            usual: 70, //平时成绩
-            course_name: "计算机网路", //课程名
-            end_of_term: 40, //期末成绩
-            id: 1455, //id
-          },
-          {
-            student_name: "叶敏", //学生姓名
-            usual: 60, //平时成绩
-            course_name: "计算机网路", //课程名
-            end_of_term: 50, //期末成绩
-            id: 1455, //id
-          },
-          {
-            student_name: "叶敏", //学生姓名
-            usual: 80, //平时成绩
-            course_name: "计算机网路", //课程名
-            end_of_term: 80, //期末成绩
-            id: 1455, //id
-          },
-          {
-            student_name: "叶敏", //学生姓名
-            usual: 60, //平时成绩
-            course_name: "计算机网路", //课程名
-            end_of_term: 80, //期末成绩
-            id: 1455, //id
+            message: "姓名的长度在1~6个字符之间",
+            trigger: "blur",
           },
         ],
-      }, // 返回数据列表
-      //listLoading: true, // 加载中
-
-      formInline: {
-        // 搜索条件，value
-        user: "",
-        region: "",
+        student_no: [
+          { required: true, message: "请输入9位数的学号", trigger: "blur" },
+          {
+            message: "请输入9位数的学号",
+            trigger: "blur",
+          },
+        ],
+        gender: [{ required: true, trigger: "blur" }],
+        class_no: [
+          { required: true, message: "请输入点名信息", trigger: "blur" },
+          //   { validator: checkMobile, trigger: "blur" },
+        ],
+        remark: [{ message: "请填写备注信息", trigger: "blur" }],
       },
-      currentPage: 1, // 分页，当前页数
-      per: 10, // 每页的条数
+      // 控制修改用户对话框的显示与隐藏
+      editDialogVisible: false,
+      // 查询到的用户信息对象
+      editForm: {},
+      // 修改表单的验证规则对象
+      editFormRules: {
+        student_name: [
+          {
+            required: true,
+            message: "请输入学生姓名",
+            trigger: "blur",
+          },
+          {
+            message: "姓名的长度在1~6个字符之间",
+            trigger: "blur",
+          },
+        ],
+        student_no: [
+          {
+            required: true,
+            message: "请输入10位数的学号",
+            trigger: "blur",
+          },
+        ],
+        gender: [{ required: true, trigger: "blur" }],
+        class_no: [
+          {
+            required: true,
+            message: "请输入8位班级编号",
+            trigger: "blur",
+          },
+        ],
+        // remark: [{ required: true, message: "请选择备注", trigger: "blur" }],
+      },
+      // 控制分配角色对话框的显示与隐藏
+      setRoleDialogVisible: false,
+      // 需要被分配角色的用户信息
+      userInfo: {},
+      // 所有角色的数据列表
+      rolesList: [],
+      // 已选中的角色Id值
+      selectedRoleId: "",
     };
   },
-  filters: {},
+  mounted() {
+    // 计算一共有几页
+    // this.total = Math.ceil(this.addStudent.length / this.pagesize);
+    this.pageInation(this.pagenum, this.pagesize);
+    // 计算得0时设置为1
+    // this.total = this.total == 0 ? 1 : this.total;
+    // this.handleSizeChange();
+  },
+
   created() {
-    // 初始化列表
-    // this.fetchData();
+    //this.getStudentList();
+    this.getCourseName();
   },
   methods: {
-    Grades(score) {
-      console.log(typeof score);
-      switch (score) {
-        case score >= 90:
-          return "优秀";
-          break;
-        case score < 90 && score >= 80:
-          return "良好";
-          break;
-        case score < 80 && score >= 70:
-          return "一般";
-          break;
-        case score < 70 && score >= 60:
-          return "及格";
-          break;
-        case score < 70:
-          return "不及格";
-          break;
-      }
-    },
-
-    // 获取列表信息
-
-    fetchData() {
-      this.listLoading = true;
-      const title = this.formInline.region;
-      const content = this.formInline.user;
-      // 将查询条件传递过去
-      var data = {};
-      data[title] = content;
-      data.page = this.currentPage;
-      data.per = this.per;
-      /*  data.major_name = "会计学院";
-      console.log(data); */
-      if (this.major) {
-        console.log(this.major);
-        data.major_name = this.major;
-        // 调用排课信息列表
-        ScheduleList(data).then((response) => {
-          console.log(response);
-          var count = 0;
-          this.list.list = [];
-          response.info.list.forEach((item) => {
-            if (item.t_id) {
-              console.log(item);
-              count += 1;
-              this.list.list.push(item);
-            }
-          });
-          this.list.allCount = count;
-          console.log(this.list);
-          this.listLoading = false;
-        });
+    filterColor(grade) {
+      if (grade >= 90) {
+        return "primary";
+      } else if (grade >= 80 && grade < 90) {
+        return "success";
+      } else if (grade >= 70 && grade < 80) {
+        return "info";
+      } else if (grade >= 60 && grade < 70) {
+        return "warning";
       } else {
-        // 调用排课信息列表
-        ScheduleList(data).then((response) => {
-          console.log(response);
-          this.list = response.info;
-          this.listLoading = false;
-        });
+        return "danger";
       }
     },
-    // 按条件查询
-    SearchHandle() {
-      this.fetchData();
+    // 监听 pagesize 改变的事件
+    handleSizeChange(newSize) {
+      this.pagesize = newSize;
+      this.pagenum = 1;
+      this.pageInation(this.pagenum, this.pagesize);
     },
-    // 添加新纪录
-    AddTeacherRow() {
-      this.$router.push("/schedule/ScheduleAdd");
+
+    // 监听 页码值 改变的事件
+    handleCurrentChange(newPage) {
+      this.pagenum = newPage;
+      this.pageInation(this.pagenum, this.pagesize);
     },
-    // 编辑按钮
-    handleEdit(row) {
-      console.log(row);
-      // 跳转到修改页面
-      this.$router.push({ name: "ScheduleMotify", params: row });
+    pageInation(pagenum, pagesize) {
+      pagenum = pagenum ? pagenum : this.pagenum;
+      pagesize = pagesize ? pagesize : this.pagesize;
+      //console.log(this.allgrade.length - 1);
+      this.total = this.allgrade.length - 1;
+      //每次点击更改页码值
+      let begin = (this.pagenum - 1) * this.pagesize;
+      let end = this.pagenum * this.pagesize;
+      this.gradeinfo = this.allgrade.slice(begin, end);
     },
-    // 删除按钮
-    handleDelete(row) {
-      this.$confirm("此操作将永久删除该记录, 是否继续?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
-      })
-        .then(() => {
-          // console.log(1111);
-          ScheduleDelete(row._id).then((res) => {
-            // console.log(res)
-            if (res.code === 1) {
-              this.$message({
-                type: "success",
-                message: "删除成功!",
-              });
-              this.fetchData();
-            } else {
-              this.$message({
-                type: "info",
-                message: "删除失败!",
-              });
-            }
-          });
-        })
-        .catch(() => {
-          this.$message({
-            type: "info",
-            message: "已取消删除",
-          });
+    // 获取班级
+    async getDesignatedCourse(value) {
+      console.log(value);
+      value = value + "";
+      let that = this;
+      await this.$http
+        .post(`/api/cms/grade/1?_method=GET&course_no=${value}`)
+        .then((res) => {
+          console.log(res);
+          if (res.status === 200) {
+            this.allgrade = res.data.data;
+
+            this.total = res.data.total;
+            // console.log(this.tableData);
+          }
+          let begin = (that.pagenum - 1) * that.pagesize;
+          let end = that.pagenum * that.pagesize;
+          that.gradeinfo = that.allgrade.slice(begin, end);
+
+          this.pagenum = 1;
+          this.pageInation(this.pagenum, this.pagesize);
         });
     },
-    // 全选
-    handleSelectionChange(val) {
-      console.log(val);
-      // this.multipleSelection = val;
+    filterHandler(value, row, column) {
+      return row.class_name === value;
     },
-    // 分页
-    handleSizeChange(val) {
-      console.log(`每页 ${val} 条`);
-      this.per = val;
-      this.fetchData();
+    exportExcel() {},
+    async getCourseName() {
+      await this.$http.post("/api/cms/curs/1?_method=GET").then((res) => {
+        console.log(res);
+        if (res.status === 200) {
+          var list = res.data.data;
+          var course_list = [];
+          var course_options = [];
+          list.forEach(function (item, index) {
+            course_list[index] = {};
+            course_options[index] = {};
+
+            course_list[index].text = item.course_name;
+            course_list[index].value = item.course_no;
+
+            course_options[index].course_no = item.course_no;
+            course_options[index].course_name = item.course_name;
+          });
+          this.courselist = course_list;
+          this.options = course_options;
+          console.log(this.courselist);
+          console.log(this.options);
+        }
+      });
     },
-    handleCurrentChange(val) {
-      console.log(`当前页: ${val}`);
-      this.currentPage = val;
-      this.fetchData();
+    async getStudentList() {
+      let that = this;
+      await this.$http.post("/api/cms/grade/1?_method=GET").then((res) => {
+        console.log(res);
+        if (res.status === 200) {
+          this.allgrade = res.data.data;
+          this.total = res.data.total;
+        }
+        let begin = (that.pagenum - 1) * that.pagesize;
+        let end = that.pagenum * that.pagesize;
+        that.gradeinfo = that.allgrade.slice(begin, end);
+      });
+      //   if (res.meta.status !== 200) {
+      //     return this.$message.error("获取用户列表失败！");
+      //   }
+      //   console.log(res.data);
+      //this.studentlist = res.data;
+      //   this.total = res.data.total;
+      //   console.log(res);
+    },
+
+    // 监听 switch 开关状态的改变
+    async userStateChanged(userinfo) {
+      console.log(userinfo);
+      const { data: res } = await this.$http.put(
+        `users/${userinfo.id}/state/${userinfo.mg_state}`
+      );
+      if (res.meta.status !== 200) {
+        userinfo.mg_state = !userinfo.mg_state;
+        return this.$message.error("更新用户状态失败！");
+      }
+      this.$message.success("更新用户状态成功！");
+    },
+    // 监听添加用户对话框的关闭事件
+    addDialogClosed() {
+      this.$refs.addFormRef.resetFields();
+    },
+    // 点击按钮，添加学生
+    addStudent() {
+      this.$refs.addFormRef.validate(async (valid) => {
+        if (!valid) return;
+        // 可以发起添加用户的网络请求
+        console.log(this.addForm);
+        this.$http
+          .post("/api/cms/stu/1?_method=POST", [
+            {
+              student_name: this.addForm.student_name,
+              student_no: this.addForm.student_no,
+              class_no: this.addForm.class_no,
+              gender: this.addForm.gender,
+              remark: this.addForm.remark,
+            },
+          ])
+          .then((res) => {
+            if (res.status != 200) {
+              // 提示修改失败
+              return this.$message.error("更新学生信息失败！");
+            }
+            // 关闭对话框
+            this.addDialogVisible = false;
+            // 刷新数据列表
+            this.getStudentList();
+            // 提示修改成功
+            this.$message.success("添加学生信息成功！");
+          });
+      });
+    },
+    // 删除学生
+    removeStudent(id) {
+      console.log(id);
+      this.$http.post(`/api/cms/stu/1?_method=DELETE&id=${id}`).then((res) => {
+        console.log(res);
+        this.$message({
+          message: "删除学生信息成功",
+          type: "success",
+        });
+
+        // 重新获取用户列表数据
+        this.getStudentList();
+        this.pagenum = 1;
+        this.pageInation(this.pagenum, this.pagesize);
+      });
+    },
+    // 展示编辑用户的对话框
+    async showEditDialog(row) {
+      this.editDialogVisible = true;
+      var stu_no = row.student_no;
+
+      await this.$http
+        .post(`/api/cms/stu/1?_method=GET&student_no=${stu_no}`)
+        .then((res) => {
+          console.log(res);
+          if (res.status === 200) {
+            // this.editForm.student_no = res.data.data[0].student_no;
+            // this.editForm.student_name = res.data.data[0].student_name;
+            // this.editForm.gender = res.data.data[0].gender;
+            this.editForm = res.data.data[0];
+          }
+          this.$set(this.editForm, "remark", "");
+          this.$set(this.editForm, "class_no", "");
+          // this.editForm.remark = "";
+          // this.editForm.class_no = "";
+          console.log(this.editForm);
+        });
+    },
+    // 监听修改用户对话框的关闭事件
+    editDialogClosed() {
+      this.$refs.editFormRef.resetFields();
+    },
+    // 修改用户信息并提交
+    editStudent() {
+      this.$refs.editFormRef.validate((valid) => {
+        if (!valid) return;
+        // 发起修改学生信息的数据请求
+        //console.log(this.editForm);
+        this.$http
+          .post("/api/cms/stu/1?_method=POST", [
+            {
+              student_name: this.editForm.student_name,
+              student_no: this.editForm.student_no,
+              class_no: this.editForm.class_no,
+              gender: this.editForm.gender,
+              remark: this.editForm.remark,
+            },
+          ])
+          .then((res) => {
+            if (res.status != 200) {
+              // 提示修改失败
+              return this.$message.error("更新学生信息失败！");
+            }
+            // 关闭对话框
+            this.editDialogVisible = false;
+            // 刷新数据列表
+            this.getStudentList();
+            // 提示修改成功
+            this.$message.success("更新学生信息成功！");
+          });
+      });
+    },
+
+    clearStudentList() {
+      this.pageInation(this.pagenum, this.pagesize);
+    },
+    async searchStudentList(value) {
+      console.log(value);
+      //&course_no=
+      await this.$http
+        .post(`/api/cms/grade/1?_method=GET&student_no=${value}`)
+        .then((res) => {
+          console.log(res);
+          if (res.status === 200) {
+            this.gradeinfo = res.data.data;
+            this.total = res.data.total;
+            // console.log(this.tableData);
+          }
+        });
+      // this.studentlist = res.data;
+      // this.queryInfo.total = res.data.length;
     },
   },
 };
 </script>
-<style scoped>
-.app-container {
-  width: 1042px;
-  border-bottom: 1px solid #cecece;
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  margin: 0 auto;
+
+<style lang="less" scoped>
+.breadcrumb {
+  height: 50px;
+  width: 400px;
+  text-align: center;
 }
-.opera {
-  cursor: pointer;
-  margin-top: 6px;
-  margin-right: 25px;
-  float: right;
-  font-size: 12px;
-  font-style: normal;
-  color: #a79d9d;
-}
-.opera:hover {
-  color: #409eff;
-}
-.block {
-  padding-top: 15px;
-  display: flex;
-  justify-content: center;
+.el-breadcrumb {
+  margin: 20px 0 0 20px;
+  font-size: 20px;
+  vertical-align: center;
 }
 </style>

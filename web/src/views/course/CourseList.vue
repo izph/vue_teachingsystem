@@ -1,101 +1,160 @@
 <template>
   <div class="data-manage-table">
-    <el-table :data="courselist" stripe border class="table">
-      <el-table-column
-        prop="course_no"
-        label="课程编号"
-        width="150"
-        align="center"
-        height="250"
-      />
-      <el-table-column
-        label="课程名称"
-        width="150"
-        prop="course_name"
-        align="center"
-      />
-      <el-table-column
-        label="任课老师"
-        width="120"
-        prop="user_name"
-        align="center"
-      />
-
-      <el-table-column
-        label="开课时间"
-        prop="start_time"
-        align="center"
-        sortable
-        width="180"
-      />
-      <el-table-column
-        label="结课时间"
-        prop="end_time"
-        align="center"
-        sortable
-        width="180"
-      />
-      <el-table-column
-        label="开学时间"
-        width="180"
-        prop="start_date"
-        align="center"
-      />
-      <el-table-column label="学分" align="center" width="100" prop="credit" />
-      <el-table-column label="学年" align="center" width="100" prop="year" />
-      <el-table-column
-        label="学期"
-        prop="semester"
-        align="center"
-        width="100"
-      />
-      <el-table-column label="上课班级" prop="class_name" align="center" />
-
-      <el-table-column
-        label="成绩是否录入"
-        prop="resultinput"
-        align="center"
-        width="120"
+    <el-card>
+      <el-table
+        :data="courselist"
+        stripe
+        border
+        class="table"
+        :header-cell-style="{ background: '#cbfeff', color: 'black' }"
+        @row-dblclick="handleRowdblclick"
       >
-        <template slot-scope="scope">
-          <el-switch
-            v-model="scope.row.resultinput"
-            active-color="#13ce66"
-            inactive-color="#eee"
-            active-text="是"
-            inactive-text="否"
-          >
-          </el-switch>
-        </template>
-      </el-table-column>
-      <el-table-column label="课程状态" prop="state" align="center">
-        <template slot-scope="scope">
-          <el-button
-            type="text"
-            size="small"
-            @click="goAuditionDetail(scope.row.id)"
-            >查看调查问卷</el-button
-          >
+        <el-table-column prop="id" label="ID" align="center" width="50" />
+        <el-table-column
+          prop="course_no"
+          label="课程编号"
+          align="center"
+          height="250"
+        />
+        <el-table-column
+          label="课程名称"
+          prop="course_name"
+          align="center"
+          :render-header="renderHeader"
+        />
+        <el-table-column
+          label="任课老师"
+          width="120"
+          prop="user_name"
+          align="center"
+          :render-header="renderHeader1"
+        />
 
-          <!--  点击调查问卷时，传递对应参数，展示弹框内容  -->
-        </template>
-      </el-table-column>
-    </el-table>
+        <el-table-column
+          label="开课时间"
+          prop="start_time"
+          align="center"
+          width="60"
+        />
+        <el-table-column
+          label="结课时间"
+          prop="end_time"
+          align="center"
+          width="60"
+        />
 
-    <!--  分页  -->
+        <el-table-column
+          label="开学时间"
+          width="150"
+          prop="start_date"
+          align="center"
+        >
+          <template slot-scope="scope">
+            {{ scope.row.start_date | filterDate }}
+          </template>
+        </el-table-column>
 
-    <el-pagination
-      :page-size="page_size"
-      :total="totalNum"
-      :current-page="currentPage"
-      layout="prev, pager, next, jumper"
-      class="pagination"
-      @current-change="handleCurrentChange"
-    />
+        <el-table-column
+          label="学分"
+          align="center"
+          width="100"
+          prop="credit"
+          sortable
+        />
+        <el-table-column label="学年" align="center" width="100" prop="year" />
+        <el-table-column
+          label="学期"
+          prop="semester"
+          align="center"
+          width="100"
+        />
+        <el-table-column
+          label="上课班级"
+          prop="class_name"
+          align="center"
+          width="150"
+        />
 
+        <el-table-column
+          label="成绩是否录入"
+          prop="resultinput"
+          align="center"
+          width="120"
+        >
+          <template slot-scope="scope">
+            <el-switch
+              v-model="scope.row.resultinput"
+              active-color="#13ce66"
+              inactive-color="#eee"
+              active-text="是"
+              inactive-text="否"
+            >
+            </el-switch>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="课程状态"
+          prop="state"
+          align="center"
+          width="100"
+        >
+          <template slot-scope="scope">
+            <!-- <el-tag
+            :type="scope.row.state === 'ing' ? 'success' : 'danger'"
+            disable-transitions
+            >{{ scope.row.state == "ing" ? "进行中" : "已结课" }}</el-tag
+          > -->
+            <el-tag :type="filterColor(scope.row.state)" disable-transitions>{{
+              scope.row.state | filterState
+            }}</el-tag>
+          </template>
+        </el-table-column>
+
+        <el-table-column label="删除课程" align="center" width="100">
+          <template slot-scope="scope">
+            <el-popconfirm
+              confirm-button-text="确定"
+              cancel-button-text="取消"
+              style="margin: 0 15px"
+              size="medium"
+              icon="el-icon-info"
+              icon-color="red"
+              title="确定删除当前课程记录吗？"
+              @confirm="removeCourse(scope.row.id)"
+            >
+              <el-button
+                type="danger"
+                icon="el-icon-delete"
+                size="mini"
+                slot="reference"
+              ></el-button>
+            </el-popconfirm>
+          </template>
+        </el-table-column>
+      </el-table>
+
+      <!--  分页  -->
+
+      <el-pagination
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page="pagenum"
+        :page-sizes="[5, 10, 20, 50, 100]"
+        :page-size="pagesize"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="total"
+      >
+      </el-pagination>
+    </el-card>
     <!--  弹框 -->
 
-    <el-dialog :visible.sync="dialogFormVisible" title="查看调查问卷">
+    <el-dialog
+      :visible.sync="editDialogFormVisible"
+      title="修改课程信息"
+      width="50%"
+      @close="editDialogClosed"
+      :append-to-body="true"
+    >
       <div v-for="(item, index) in data" :key="index">
         <el-form class="see-questionnaire">
           <el-row :gutter="20">
@@ -118,134 +177,149 @@
 
 <script>
 //  引入control层去调用接口
+import { filterDate } from "../../network/formatDate.js";
 
 export default {
   filters: {
-    filterDate(val) {
-      //时间兼容处理函数
-      return val || "--";
+    filterDate,
+    filterState(value) {
+      switch (value) {
+        case "ing":
+          return "进行中";
+          break;
+        case "end":
+          return "已结课";
+          break;
+
+        default:
+          return "未开始";
+      }
     },
   },
-  props: {
-    list: {
-      //父组件传递list值校验
-      type: Array,
-      default: () => [],
-    },
-    totalNum: {
-      //父组件传递 totalNum值校验
-      type: Number,
-      default: 0,
-    },
-  },
+  props: {},
   data() {
     //子组件里面的值设置
     return {
-      value: true,
-      currentPage: 1,
-      page_size: 20,
-      dialogFormVisible: false, //默认不展示弹框
-      formLabelWidth: "120",
+      // 当前的页数
+      pagenum: 1,
+      // 当前每页显示多少条数据
+      pagesize: 10,
+      total: 0,
+      editDialogFormVisible: false, //默认不展示弹框
+
       data: {},
-      courselist: [
-        {
-          course_name: "R语言数据分析", // 课程名称
-          year: "2020", // 学年
-          user_name: "王利", // 教师姓名
-          end_time: 18, // 结课时间（第几周）
-          resultinput: false, // 成绩是否录入
-          start_time: 1, // 开课时间（第几周）
-          semester: "秋", // 学期
-          id: 6, // id
-          course_no: "12019", // 课程编号
-          state: "waiting", // 课程状态
-          credit: 1, // 学分
-          class_name: "2019级(2)班", // 上课的班级名程
-          start_date: 1598889600000, // 开学时间（需要转换）
-        },
-        {
-          course_name: "R语言数据分析", // 课程名称
-          year: "2020", // 学年
-          user_name: "王利", // 教师姓名
-          end_time: 18, // 结课时间（第几周）
-          resultinput: true, // 成绩是否录入
-          start_time: 1, // 开课时间（第几周）
-          semester: "秋", // 学期
-          id: 6, // id
-          course_no: "83596", // 课程编号
-          state: "waiting", // 课程状态
-          credit: 1, // 学分
-          class_name: "2019级(2)班", // 上课的班级名程
-          start_date: 1598889600000, // 开学时间（需要转换）
-        },
-        {
-          course_name: "R语言数据分析", // 课程名称
-          year: "2020", // 学年
-          user_name: "王利", // 教师姓名
-          end_time: 18, // 结课时间（第几周）
-          resultinput: true, // 成绩是否录入
-          start_time: 1, // 开课时间（第几周）
-          semester: "秋", // 学期
-          id: 6, // id
-          course_no: "27835", // 课程编号
-          state: "waiting", // 课程状态
-          credit: 1, // 学分
-          class_name: "2019级(2)班", // 上课的班级名程
-          start_date: 1598889600000, // 开学时间（需要转换）
-        },
-        {
-          course_name: "数据结构与算法", // 课程名称
-          year: "2020", // 学年
-          user_name: "王利", // 教师姓名
-          end_time: 18, // 结课时间（第几周）
-          resultinput: false, // 成绩是否录入
-          start_time: 1, // 开课时间（第几周）
-          semester: "秋", // 学期
-          id: 6, // id
-          course_no: "27835", // 课程编号
-          state: "waiting", // 课程状态
-          credit: 1, // 学分
-          class_name: "2019级(2)班", // 上课的班级名程
-          start_date: 1598889600000, // 开学时间（需要转换）
-        },
-        {
-          course_name: "R语言数据分析", // 课程名称
-          year: "2020", // 学年
-          user_name: "王利", // 教师姓名
-          end_time: 18, // 结课时间（第几周）
-          resultinput: true, // 成绩是否录入
-          start_time: 1, // 开课时间（第几周）
-          semester: "秋", // 学期
-          id: 6, // id
-          course_no: "27835", // 课程编号
-          state: "waiting", // 课程状态
-          credit: 1, // 学分
-          class_name: "2019级(2)班", // 上课的班级名程
-          start_date: 1598889600000, // 开学时间（需要转换）
-        },
-      ],
+      courselist: [],
+      allcourse: [],
     };
   },
+  mounted() {
+    // 计算一共有几页
+    this.total = Math.ceil(this.allcourse.length / this.pagesize);
+    this.pageInation(this.pagenum, this.pagesize);
+    // 计算得0时设置为1
+    // this.total = this.total == 0 ? 1 : this.total;
+    // this.handleSizeChange();
+  },
+  created() {
+    this.getCourseList();
+  },
   methods: {
-    handleCurrentChange(val) {
-      //点击当前页，传递当前页码给父组件
-      this.$emit("pageTurn", val);
+    handleRowdblclick(row, column, event) {
+      console.log(row);
+      console.log(column);
+      console.log(event);
     },
-    goAuditionDetail(id) {
-      DataResearch.questionDeatil({ answer_id: id }) // 调用接口数据
+    // 监听 pagesize 改变的事件
+    handleSizeChange(newSize) {
+      console.log(newSize);
+      this.pagesize = newSize;
+      this.pagenum = 1;
+      this.pageInation(this.pagenum, this.pagesize);
+    },
+
+    // 监听 页码值 改变的事件
+    handleCurrentChange(newPage) {
+      console.log(newPage);
+      this.pagenum = newPage;
+      this.pageInation(this.pagenum, this.pagesize);
+    },
+    pageInation(pagenum, pagesize) {
+      pagenum = pagenum ? pagenum : this.pagenum;
+      pagesize = pagesize ? pagesize : this.pagesize;
+
+      //每次点击更改页码值
+      let begin = (this.pagenum - 1) * this.pagesize;
+      let end = this.pagenum * this.pagesize;
+      this.courselist = this.allcourse.slice(begin, end);
+    },
+    filterColor(state) {
+      switch (state) {
+        case "ing":
+          return "success";
+          break;
+        case "end":
+          return "danger";
+          break;
+        default:
+          return "info";
+      }
+    },
+
+    async removeCourse(id) {
+      // console.log(id);
+      await this.$http
+        .post(`/api/cms/curs/1?_method=DELETE&id=${id}`)
         .then((res) => {
-          if (res.code === 0) {
-            this.data = res.data;
-            this.dialogFormVisible = true;
-          }
-        })
-        .catch(() => {
+          console.log(res);
           this.$message({
-            type: "error",
-            message: "获取作答详情失败，请稍候重试！",
+            message: "删除课程信息成功",
+            type: "success",
           });
-          this.dialogFormVisible = true;
+
+          // 重新获取用户列表数据
+          this.getCourseList();
+          this.pagenum = 1;
+          this.pageInation(this.pagenum, this.pagesize);
         });
+    },
+    renderHeader(h, { column }) {
+      // h即为cerateElement的简写，具体可看vue官方文档
+      return h("div", [
+        h("span", column.label),
+        h("i", {
+          class: "el-icon-notebook-1",
+          style: "color:#fd6c2e;margin-left:10px;",
+        }),
+      ]);
+    },
+    renderHeader1(h, { column }) {
+      // h即为cerateElement的简写，具体可看vue官方文档
+      return h("div", [
+        h("span", column.label),
+        h("i", {
+          class: "el-icon-user-solid",
+          style: "color:#fd6c2e;margin-left:5px;",
+        }),
+      ]);
+    },
+
+    goAuditionDetail() {},
+    transformatDate(time) {
+      filterDate(time);
+    },
+
+    async getCourseList() {
+      let that = this;
+      await this.$http.post("/api/cms/curs/1?_method=GET").then((res) => {
+        console.log(res);
+        if (res.status === 200) {
+          this.allcourse = res.data.data;
+          this.total = res.data.total;
+        }
+        let begin = (that.pagenum - 1) * that.pagesize;
+        let end = that.pagenum * that.pagesize;
+        that.courselist = that.allcourse.slice(begin, end);
+      });
     },
   },
 };
@@ -254,7 +328,7 @@ export default {
 <style lang="scss" scoped>
 .data-manage-table {
   .el-table__body-wrapper {
-    overflow: hidden;
+    overflow: scroll;
   }
   .el-dialog__title {
     font-size: 18px;
@@ -278,11 +352,10 @@ export default {
       -webkit-box-orient: vertical;
     }
   }
-  .pagination {
-    margin: 10px 0;
-    text-align: right;
+  .el-pagination {
+    width: 800px;
+    margin: 0 auto;
   }
-
   .item-title {
     font-size: 14px;
     color: #606266;
