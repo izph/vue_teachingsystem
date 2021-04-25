@@ -383,51 +383,15 @@ export default {
     // 计算得0时设置为1
     // this.total = this.total == 0 ? 1 : this.total;
     // this.handleSizeChange();
-    window.addEventListener("scroll", function () {
-      //兼容性，获取页面滚动距离
-      var scrollTop =
-        window.pageYOffset ||
-        document.documentElement.scrollTop ||
-        document.body.scrollTop;
-
-      console.log(scrollTop);
-    });
-
-    // DOM异步更新 对未来更新后的视图进行操作 在更新后执行
-    // this.$nextTick(() => {
-    //   //获取到达页面顶端的值
-    //   var height = document.getElementById("fixedCard");
-    //   this.offsetTop = height.offsetTop + 60;
-    //   //获取宽度
-    //   this.offsetWidth = height.offsetWidth;
-    //   console.log(1);
-    // });
   },
   destroyed() {
     //移除监听
-    window.removeEventListener("scroll", this.initHeight);
   },
   created() {
     this.getStudentList();
     this.getClassName();
   },
   methods: {
-    initHeight() {
-      //兼容性，获取页面滚动距离
-      var scrollTop =
-        window.pageYOffset ||
-        document.documentElement.scrollTop ||
-        document.body.scrollTop;
-
-      console.log(scrollTop);
-      //判断滚动距离是否大于元素到顶端距离
-
-      // this.fixed = scrollTop > this.offsetTop ? true : false;
-      // //宽度赋值
-      // document.getElementById("fixedCard").style.width =
-      //   this.offsetWidth + "px";
-    },
-
     outExcel() {
       console.log(1);
       /* out-table关联导出的dom节点  */

@@ -1,6 +1,9 @@
 <template>
   <div class="data-manage-table">
     <el-card>
+      <div style="text-align: center">
+        <span class="course-center">课程信息列表</span>
+      </div>
       <el-table
         :data="courselist"
         stripe
@@ -43,7 +46,7 @@
           width="60"
         />
 
-        <el-table-column
+        <!-- <el-table-column
           label="开学时间"
           width="150"
           prop="start_date"
@@ -52,7 +55,7 @@
           <template slot-scope="scope">
             {{ scope.row.start_date | filterDate }}
           </template>
-        </el-table-column>
+        </el-table-column> -->
 
         <el-table-column
           label="学分"
@@ -109,7 +112,17 @@
             }}</el-tag>
           </template>
         </el-table-column>
-
+        <el-table-column label="课程详情" width="150" align="center">
+          <template slot-scope="scope">
+            <el-button
+              type="success"
+              icon="el-icon-tickets"
+              size="mini"
+              @click="toCourseDetails(scope.row)"
+              >课程详情</el-button
+            >
+          </template>
+        </el-table-column>
         <el-table-column label="删除课程" align="center" width="100">
           <template slot-scope="scope">
             <el-popconfirm
@@ -132,23 +145,23 @@
           </template>
         </el-table-column>
       </el-table>
-
-      <!--  分页  -->
-
-      <el-pagination
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-        :current-page="pagenum"
-        :page-sizes="[5, 10, 20, 50, 100]"
-        :page-size="pagesize"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="total"
-      >
-      </el-pagination>
+      <div style="margin-top: 20px">
+        <!--  分页  -->
+        <el-pagination
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="pagenum"
+          :page-sizes="[5, 10, 20, 50, 100]"
+          :page-size="pagesize"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="total"
+        >
+        </el-pagination>
+      </div>
     </el-card>
     <!--  弹框 -->
 
-    <el-dialog
+    <!-- <el-dialog
       :visible.sync="editDialogFormVisible"
       title="修改课程信息"
       width="50%"
@@ -171,7 +184,7 @@
           </el-row>
         </el-form>
       </div>
-    </el-dialog>
+    </el-dialog> -->
   </div>
 </template>
 
@@ -224,6 +237,16 @@ export default {
     this.getCourseList();
   },
   methods: {
+    toCourseDetails(row) {
+      sessionStorage.setItem("row", JSON.stringify(row));
+      this.$store.commit("setCourserow", row);
+      this.$router.push({
+        name: "CourseDetails",
+        params: {
+          row,
+        },
+      });
+    },
     handleRowdblclick(row, column, event) {
       console.log(row);
       console.log(column);
@@ -367,5 +390,12 @@ export default {
   .see-questionnaire {
     padding-bottom: 20px;
   }
+}
+
+.course-center {
+  font-size: 40px;
+  text-align: center;
+  -webkit-text-stroke: 1px #03fafa;
+  -webkit-text-fill-color: transparent;
 }
 </style>

@@ -3,10 +3,20 @@
     <!-- 卡片视图区域 -->
     <el-card>
       <!-- 搜索与添加区域 -->
-      <el-row :gutter="4">
+      <el-row :gutter="24">
+        <el-col :span="4"
+          ><div class="grid-content bg-purple">&nbsp;</div></el-col
+        >
+        <el-col :span="16" class="el-col-center"
+          ><span> 用户信息管理中心 </span></el-col
+        >
         <el-col :span="4">
-          <el-button type="primary" @click="addUserInfo">添加用户</el-button>
-          <!-- <el-button type="success" @click="exportExcel">导出数据</el-button> -->
+          <el-button
+            type="primary"
+            @click="addUserInfo"
+            style="margin-left: 120px"
+            >添加用户</el-button
+          >
         </el-col>
       </el-row>
 
@@ -278,7 +288,12 @@ export default {
       this.$router.push("/admin/user/add");
     },
     toUserInfo(id) {
-      this.$router.push("");
+      this.$router.push({
+        name: "UserAllInfo",
+        params: {
+          id,
+        },
+      });
     },
     async editUser() {
       this.$refs.editFormRef.validate(async (valid) => {
@@ -360,6 +375,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.el-col-center {
+  font-size: 25px;
+  text-align: center;
+
+  -webkit-text-stroke: 1px #409eff;
+  -webkit-text-fill-color: transparent;
+}
 .user-contain {
   height: 100%;
 }

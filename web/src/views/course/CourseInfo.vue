@@ -30,18 +30,42 @@ export default {
   name: "CourseInfo",
   data() {
     return {
-      courseInfo: [],
+      courseInfo: [
+        {
+          classname: "计算机与科学",
+          classsize: "80人",
+          classtime: "星期四 上午 1-2节",
+          classlocation: "菲华楼401",
+        },
+        {
+          classname: "计算机与科学",
+          classsize: "80人",
+          classtime: "星期四 上午 1-2节",
+          classlocation: "菲华楼401",
+        },
+        {
+          classname: "计算机与科学",
+          classsize: "80人",
+          classtime: "星期四 上午 1-2节",
+          classlocation: "菲华楼401",
+        },
+        {
+          classname: "计算机与科学",
+          classsize: "80人",
+          classtime: "星期四 上午 1-2节",
+          classlocation: "菲华楼401",
+        },
+      ],
     };
   },
   methods: {
     async getcourseList() {
       //   console.log("hahahahah");
-      const { data: res } = await this.$http.get(
-        "http://127.0.0.1:8888/api/admin/user/userinfo"
-      );
+      // const { data: res } = await this.$http.get(
+      //   "http://127.0.0.1:8888/api/admin/user/userinfo"
+      // );
       // console.log(data.demoLis);
-
-      this.courseInfo = res.data.data;
+      //this.courseInfo = res.data.data;
     },
     toCourseDetails: function (id) {
       this.$router.push({ name: "CourseDetails", params: { id: id } });

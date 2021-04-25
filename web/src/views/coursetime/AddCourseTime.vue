@@ -4,9 +4,7 @@
       <el-card class="box-card">
         <div slot="header" class="clearfix">
           <span>添加上课时间</span>
-          <el-button style="float: right; padding: 3px 0" type="text"
-            >确定添加</el-button
-          >
+          <i style="float: right; padding: 3px 0" class="el-icon-menu"></i>
         </div>
 
         <el-form
@@ -21,41 +19,32 @@
           </el-form-item>
 
           <el-form-item label="weekday" prop="weekday">
-            <el-input v-model="ruleForm.weekday"></el-input>
+            <el-select v-model="ruleForm.weekday" placeholder="请选择星期几">
+              <el-option label="星期一" value="Mon"></el-option>
+              <el-option label="星期二" value="Tue"></el-option>
+              <el-option label="星期三" value="Wed"></el-option>
+              <el-option label="星期四" value="Thu"></el-option>
+              <el-option label="星期五" value="Fri"></el-option>
+              <el-option label="星期六" value="Sat"></el-option>
+              <el-option label="星期天" value="Sun"></el-option>
+            </el-select>
           </el-form-item>
 
           <el-form-item label="上课时间" prop="time_frame">
-            <el-input v-model="ruleForm.staff_no"></el-input>
+            <el-input v-model="ruleForm.time_frame"></el-input>
           </el-form-item>
 
           <el-form-item label="上课地点" prop="place">
             <el-input v-model="ruleForm.place"></el-input>
           </el-form-item>
 
-          <el-form-item label="上课时间" prop="time_frame">
-            <el-select
-              v-model="ruleForm.time_frame"
-              placeholder="请选择上课时间"
-            >
-              <el-option label="第一周" value="1"></el-option>
-              <el-option label="第二周" value="2"></el-option>
-              <el-option label="第三周" value="3"></el-option>
-              <el-option label="第四周" value="4"></el-option>
-              <el-option label="第五周" value="5"></el-option>
-              <el-option label="第六周" value="6"></el-option>
-              <el-option label="第七周" value="7"></el-option>
-              <el-option label="第八周" value="8"></el-option>
-              <el-option label="第九周" value="9"></el-option>
-              <el-option label="第十周" value="10"></el-option>
-            </el-select>
-          </el-form-item>
-
           <el-form-item label="备注" prop="remark">
             <el-input type="textarea" v-model="ruleForm.remark"></el-input>
           </el-form-item>
+
           <el-form-item>
             <el-button type="primary" @click="submitForm('ruleForm')"
-              >立即创建</el-button
+              >立即添加</el-button
             >
             <el-button @click="resetForm('ruleForm')">重置</el-button>
           </el-form-item>
@@ -70,68 +59,79 @@ export default {
   data() {
     return {
       ruleForm: {
-        course_no: "",
-        course_name: "植物学基础",
-        staff_no: "00000002",
-        class_no: "20190002",
-        year: "2020",
-        semester: "春",
-        credit: 3,
-        state: "ing",
-        start_time: 1,
-        end_time: 18,
-        start_date: "2021-03-01",
-        resultinput: false,
-        remark: "test",
+        course_no: "", //课程编号
+        weekday: "", //星期几
+        time_frame: "", //上课时间段
+        place: "", //上课地点
+        remark: "",
       },
       rules: {
-        name: [
-          { required: true, message: "请输入活动名称", trigger: "blur" },
-          { min: 3, max: 5, message: "长度在 3 到 5 个字符", trigger: "blur" },
-        ],
-        region: [
-          { required: true, message: "请选择活动区域", trigger: "change" },
-        ],
-        date1: [
+        course_no: [
           {
-            type: "date",
             required: true,
-            message: "请选择日期",
-            trigger: "change",
+            message: "请输入已存在的并且正确的课程编号",
+            trigger: "blur",
+          },
+          {
+            min: 10,
+            max: 30,
+            message: "长度在 15 到 30 个号码",
+            trigger: "blur",
           },
         ],
-        date2: [
+        weekday: [
+          { required: true, message: "请选择星期几上课", trigger: "blur" },
+        ],
+        time_frame: [
           {
-            type: "date",
             required: true,
-            message: "请选择时间",
-            trigger: "change",
+            message: "请选择上课时间",
+            trigger: "blur",
           },
         ],
-        type: [
+        place: [
           {
-            type: "array",
             required: true,
-            message: "请至少选择一个活动性质",
-            trigger: "change",
+            message: "请选择上课地点",
+            trigger: "blur",
           },
         ],
-        resource: [
-          { required: true, message: "请选择活动资源", trigger: "change" },
+        remark: [
+          {
+            required: true,
+            message: "请输入备注信息",
+            trigger: "blur",
+          },
         ],
-        desc: [{ required: true, message: "请填写活动形式", trigger: "blur" }],
       },
     };
   },
   methods: {
     submitForm(formName) {
+      console.log(this.ruleForm);
+
       this.$refs[formName].validate((valid) => {
-        if (valid) {
-          alert("submit!");
-        } else {
-          console.log("error submit!!");
-          return false;
-        }
+        if (!valid) return;
+        this.$http
+          .post("/api/cms/coursetime/1?_method=POST", [
+            {
+              course_no: this.ruleForm.course_no,
+              weekday: this.ruleForm.weekday,
+              time_frame: this.ruleForm.time_frame,
+              place: this.ruleForm.place,
+              remark: this.ruleForm.remark,
+            },
+          ])
+          .then((res) => {
+            console.log(res);
+            if (res.status == 200 && res.data.update == 1) {
+              this.$message({
+                message: "课程添加上课时间成功！",
+                type: "success",
+              });
+              this.resetForm("ruleForm");
+            }
+          });
       });
     },
     resetForm(formName) {

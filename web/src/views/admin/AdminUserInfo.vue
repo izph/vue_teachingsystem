@@ -23,6 +23,7 @@
           type="text"
           v-model="userInfo.staff_no"
           autocomplete="off"
+          disabled
         ></el-input>
       </el-form-item>
 

@@ -64,6 +64,9 @@ export default {
           { required: true, message: "请输入教工号", trigger: "blur" },
         ],
         passwd: [{ required: true, message: "请输入密码", trigger: "blur" }],
+        remark: [
+          { required: true, message: "请输入备注信息", trigger: "blur" },
+        ],
       },
     };
   },
@@ -115,9 +118,10 @@ export default {
 }
 .add-title {
   text-align: center;
-  color: black;
   font-size: 30px;
   margin-bottom: 20px;
+  -webkit-text-stroke: 1px #409eff;
+  -webkit-text-fill-color: transparent;
 }
 .app-container {
   position: absolute;

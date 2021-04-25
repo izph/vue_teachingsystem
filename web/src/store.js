@@ -12,6 +12,9 @@ export default new Vuex.Store({
     },
     class_no_name: {
 
+    },
+    course_row: {
+
     }
   },
   mutations: {
@@ -20,6 +23,9 @@ export default new Vuex.Store({
     },
     setStudentId(state, StudentId) {
       state.StudentId = StudentId;
+    },
+    setCourserow(state, row) {
+      state.course_row = row
     }
   },
   actions: {}

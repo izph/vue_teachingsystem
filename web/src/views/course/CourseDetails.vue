@@ -1,98 +1,106 @@
 <template>
   <div>
-    <!-- 面包屑导航区域 -->
-    <!-- <el-breadcrumb separator-class="el-icon-arrow-right">
-      <el-breadcrumb-item :to="{ path: '/home' }">首页</el-breadcrumb-item>
-      <el-breadcrumb-item>点名</el-breadcrumb-item>
-      <el-breadcrumb-item>信息计算1班</el-breadcrumb-item>
-    </el-breadcrumb> -->
-
-    <!-- 卡片视图区域 -->
-
     <el-card>
-      <el-card class="box-card">
-        <div slot="header" class="clearfix">
-          <span class="coursename">{{ coursedetails.coursename }}</span>
-          <!-- <el-button
-            style="float: right; padding: 3px 0"
-            type="text"
-            @click="toCourseDetails"
-            >课程详情</el-button
-          > -->
-        </div>
-        <div class="text item">
-          <span class="classname">{{
-            "班级名称: " + coursedetails.classname
-          }}</span>
-          <span class="classsize">{{
-            "班级人数: " + coursedetails.classsize
-          }}</span>
-          <span class="classtime">{{
-            "上课时间: " + coursedetails.classtime
-          }}</span>
-          <span class="classlocation">{{
-            "上课地点: " + coursedetails.classlocation
-          }}</span>
-        </div>
-      </el-card>
-      <!-- 搜索与添加区域 -->
-      <el-row :gutter="20">
-        <el-col :span="8">
-          <el-input
-            placeholder="请输入内容"
-            v-model="queryInfo.query"
-            clearable
-            @clear="clearStudentList"
+      <div slot="header" class="clearfix">
+        <span class="coursename">{{ coursedetails.course_name }}</span>
+      </div>
+      <div class="text">
+        <el-row :gutter="20">
+          <el-col :span="6"
+            ><span class="classname">{{
+              "班级名称: " + coursedetailslist.class_name
+            }}</span></el-col
           >
-            <el-button
-              slot="append"
-              icon="el-icon-search"
-              @click="searchStudentList(queryInfo.query)"
-            ></el-button>
-          </el-input>
-        </el-col>
-        <el-col :span="4">
-          <el-button type="primary" @click="addDialogVisible = true"
-            >添加用户</el-button
+          <el-col :span="6"
+            ><span class="classsize">{{
+              "上课日期: " + coursedetails.weekday
+            }}</span></el-col
           >
-          <el-button type="success" @click="exportExcel">导出数据</el-button>
-        </el-col>
-      </el-row>
+          <el-col :span="6"
+            ><span class="classtime">{{
+              "上课时间: " + coursedetails.time_frame
+            }}</span></el-col
+          >
+          <el-col :span="6"
+            ><span class="classlocation">{{
+              "上课地点: " + coursedetails.place
+            }}</span></el-col
+          >
+        </el-row>
+      </div>
+      <div class="text">
+        <el-row :gutter="20">
+          <el-col :span="6"
+            ><span class="classname">{{
+              "班级人数: " + coursedetailslist.num_of_stu
+            }}</span></el-col
+          >
+          <el-col :span="6"
+            ><span class="classsize">{{
+              "课程学分: " + coursedetailslist.credit
+            }}</span></el-col
+          >
+          <el-col :span="6"
+            ><span class="classtime">{{
+              "所属学院: " + coursedetailslist.academy
+            }}</span></el-col
+          >
+          <el-col :span="6"
+            ><span class="classlocation">{{
+              "任课老师: " + coursedetailslist.user_name
+            }}</span></el-col
+          >
+        </el-row>
+      </div>
 
-      <!-- 用户列表区域 -->
-      <el-table :data="studentlist" border stripe current-row-key>
+      <el-table
+        :data="studentlist"
+        border
+        stripe
+        current-row-key
+        id="out-table"
+      >
         <el-table-column
           type="index"
           align="center"
           label="序号"
+          width="70px"
         ></el-table-column>
         <el-table-column
-          label="姓名"
-          prop="studyname"
+          type="id"
+          align="center"
+          label="ID"
+          prop="id"
+          width="70px"
+        ></el-table-column>
+        <el-table-column
+          sortable
+          label="学生姓名"
+          prop="student_name"
           align="center"
         ></el-table-column>
         <el-table-column
           label="学号"
-          prop="studyno"
+          prop="student_no"
           align="center"
           sortable
         ></el-table-column>
-        <el-table-column
-          label="性别"
-          prop="sex"
-          align="center"
-        ></el-table-column>
-        <el-table-column
-          label="点名"
-          prop="rollcall"
-          align="center"
-        ></el-table-column>
-        <el-table-column
-          label="抽查"
-          prop="spotcheck"
-          align="center"
-        ></el-table-column>
-        <el-table-column label="操作" align="center">
+        <el-table-column label="性别" prop="gender" align="center">
+          <template slot-scope="scope">
+            <el-tag
+              :type="scope.row.gender === 'male' ? 'success' : 'danger'"
+              disable-transitions
+              >{{ scope.row.gender == "male" ? "男" : "女" }}</el-tag
+            >
+          </template>
+        </el-table-column>
+        <el-table-column label="所在班级" prop="class_name" align="center">
+          <template slot-scope="scope">
+            <el-tag disable-transitions>{{ scope.row.class_name }}</el-tag>
+          </template>
+        </el-table-column>
+
+        <el-table-column label="学习情况" align="center">
           <!-- <template slot-scope="scope">
             <el-switch
               v-model="scope.row.mg_state"
@@ -100,134 +108,36 @@
             >
             </el-switch>
           </template> -->
-          <template slot-scope="scope">
+          <template>
             <!-- 修改按钮 -->
+            <el-button type="primary" icon="el-icon-notebook-1" size="medium"
+              >出勤信息</el-button
+            >
+
             <el-button
-              type="primary"
-              icon="el-icon-edit"
-              size="mini"
-              @click="showEditDialog(scope.row.studyno)"
-              >修改</el-button
+              type="success"
+              icon="el-icon-notebook-2"
+              size="medium"
+              style="margin: 0 15px"
+              >抽查信息</el-button
             >
-            <!-- 删除按钮 -->
-            <el-popconfirm
-              confirm-button-text="确定"
-              cancel-button-text="取消"
-              icon="el-icon-info"
-              icon-color="red"
-              title="确定删除当前学生记录吗？"
-              @confirm="removeStudent(scope.row.studyno)"
-            >
-              <el-button
-                type="danger"
-                icon="el-icon-delete"
-                size="mini"
-                slot="reference"
-                >删除</el-button
-              >
-            </el-popconfirm>
           </template>
         </el-table-column>
-        <el-table-column label="备注" width="180px" align="center">
-        </el-table-column>
       </el-table>
-
-      <!-- 分页区域 -->
-      <el-pagination
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-        :current-page="queryInfo.pagenum"
-        :page-sizes="[2, 5, 10, 20]"
-        :page-size="queryInfo.pagesize"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="queryInfo.total"
-      >
-      </el-pagination>
+      <div>
+        <!-- 分页区域 -->
+        <el-pagination
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="pagenum"
+          :page-sizes="[5, 10, 20, 30, 50, 80, 100, 1000]"
+          :page-size="pagesize"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="total"
+        >
+        </el-pagination>
+      </div>
     </el-card>
-
-    <!-- 修改学生信息 -->
-    <el-dialog
-      title="修改学生信息"
-      :visible.sync="editDialogVisible"
-      width="50%"
-      @close="editDialogClosed"
-      :append-to-body="true"
-    >
-      <!-- 内容主体区域 -->
-      <el-form
-        :model="editForm"
-        :rules="editFormRules"
-        ref="editFormRef"
-        label-width="70px"
-      >
-        <el-form-item label="姓名" prop="studyname">
-          <el-input v-model="editForm.studyname"></el-input>
-        </el-form-item>
-        <el-form-item label="学号" prop="studyno">
-          <el-input v-model="editForm.studyno"></el-input>
-        </el-form-item>
-        <el-form-item label="性别" prop="sex">
-          <el-radio-group v-model="editForm.sex">
-            <el-radio label="男"></el-radio>
-            <el-radio label="女"></el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="点名" prop="rollcall">
-          <el-input v-model="editForm.rollcall"></el-input>
-        </el-form-item>
-
-        <el-form-item label="抽查" prop="spotcheck">
-          <el-input v-model="editForm.spotcheck"></el-input>
-        </el-form-item>
-      </el-form>
-      <!-- 底部区域 -->
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="editDialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="editStudent()">确 定</el-button>
-      </span>
-    </el-dialog>
-
-    <!-- 添加学生信息 -->
-    <el-dialog
-      title="添加学生"
-      :visible.sync="addDialogVisible"
-      width="50%"
-      @close="addDialogClosed"
-      :append-to-body="true"
-    >
-      <!-- 内容主体区域 -->
-      <el-form
-        :model="addForm"
-        :rules="addFormRules"
-        ref="addFormRef"
-        label-width="70px"
-      >
-        <el-form-item label="姓名" prop="studyname">
-          <el-input v-model="addForm.studyname"></el-input>
-        </el-form-item>
-        <el-form-item label="学号" prop="studyno">
-          <el-input v-model="addForm.studyno"></el-input>
-        </el-form-item>
-        <el-form-item label="性别" prop="sex">
-          <el-radio-group v-model="addForm.sex">
-            <el-radio label="男"></el-radio>
-            <el-radio label="女"></el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="点名" prop="rollcall">
-          <el-input v-model="addForm.rollcall"></el-input>
-        </el-form-item>
-
-        <el-form-item label="抽查" prop="spotcheck">
-          <el-input v-model="addForm.spotcheck"></el-input>
-        </el-form-item>
-      </el-form>
-      <!-- 底部区域 -->
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="addDialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="addStudent">确 定</el-button>
-      </span>
-    </el-dialog>
   </div>
 </template>
 
@@ -235,8 +145,16 @@
 export default {
   data() {
     return {
+      // 当前的页数
+      pagenum: 1,
+      // 当前每页显示多少条数据
+      pagesize: 10,
+      total: 0,
+      allstudent: [],
       // 获取获取课程详细信息
-      coursedetails: [],
+      studentlist: [],
+      coursedetailslist: {},
+      coursedetails: {},
       // 获取用户列表的参数对象
       items: [
         { type: "", label: "标签一" },
@@ -330,191 +248,89 @@ export default {
   },
   created() {
     // this.getStudentList();
-    this.pageInation(this.queryInfo.pagenum, this.queryInfo.pagesize);
+    //this.pageInation(this.queryInfo.pagenum, this.queryInfo.pagesize);
 
-    this.getcourseList();
+    this.getCourseTimeList();
   },
   methods: {
-    async getStudentList() {
-      const { data: res } = await this.$http.get(
-        // "http://127.0.0.1:8888/api/admin/mystudent"
-        "http://127.0.0.1:8888/api/admin/mystudent"
-        // {
-        //   params: this.queryInfo,
-        // }
-      );
-      //   if (res.meta.status !== 200) {
-      //     return this.$message.error("获取用户列表失败！");
-      //   }
-      //   console.log(res.data);
-      this.studentlist = res.data;
-      //   this.total = res.data.total;
-      //   console.log(res);
-    },
-
-    async getcourseList() {
-      //   console.log("hahahahah");
-      const { data: res } = await this.$http.get(
-        "http://127.0.0.1:8888/api/admin/user/userinfo"
-      );
-      // console.log(data.demoLis);
-      console.log(this.$route.params.id);
-      console.log(res.data, 1);
-      this.coursedetails = res.data.data[this.$route.params.id - 1];
-      console.log(this.coursedetails);
-    },
-
-    // 监听 switch 开关状态的改变
-    async userStateChanged(userinfo) {
-      // console.log(userinfo);
-      const { data: res } = await this.$http.put(
-        `users/${userinfo.id}/state/${userinfo.mg_state}`
-      );
-      if (res.meta.status !== 200) {
-        userinfo.mg_state = !userinfo.mg_state;
-        return this.$message.error("更新用户状态失败！");
-      }
-      this.$message.success("更新用户状态成功！");
-    },
-    // 监听添加用户对话框的关闭事件
-    addDialogClosed() {
-      this.$refs.addFormRef.resetFields();
-    },
-    // 点击按钮，添加学生
-    addStudent() {
-      this.$refs.addFormRef.validate(async (valid) => {
-        if (!valid) return;
-        // 可以发起添加用户的网络请求
-        //console.log(this.addForm);
-        const { data: res } = await this.$http.post(
-          "http://127.0.0.1:8888/api/admin/addmystudent",
-          this.addForm
-        );
-        //console.log(res);
-        // if (res.meta.status !== 201) {
-        //   this.$message.error("添加用户失败！");
-        // }
-
-        this.$message.success("添加用户成功！");
-        // 隐藏添加用户的对话框
-        this.addDialogVisible = false;
-        // 重新获取用户列表数据
-        this.getStudentList();
-      });
-    },
-    // 删除学生
-    removeStudent(studyno) {
-      console.log(studyno);
-      this.$http
-        .delete(`http://127.0.0.1:8888/api/admin/removemystudent/${studyno}`)
-        .then(() => {
-          this.$message({
-            message: "删除学生信息成功",
-            type: "success",
-          });
-          // this.page.current = 1;
-          // 重新获取用户列表数据
-          this.getStudentList();
-        });
-    },
-    // 展示编辑用户的对话框
-    async showEditDialog(studyno) {
-      console.log(studyno);
-      const { data: res } = await this.$http.get(
-        `http://127.0.0.1:8888/api/admin/getupdatemystudent/${studyno}`
-      );
-
-      //   if (res.meta.status !== 200) {
-      //     return this.$message.error("查询用户信息失败！");
-      //   }
-      console.log(res);
-      this.editForm = res.data;
-      this.editDialogVisible = true;
-    },
-    // 监听修改用户对话框的关闭事件
-    editDialogClosed() {
-      this.$refs.editFormRef.resetFields();
-    },
-    // 修改用户信息并提交
-    editStudent() {
-      this.$refs.editFormRef.validate(async (valid) => {
-        if (!valid) return;
-        // 发起修改学生信息的数据请求
-        const { data: res } = await this.$http.put(
-          `http://127.0.0.1:8888/api/admin/updatemystudent`,
-          this.editForm
-        );
-        if (!res.status) {
-          // 提示修改失败
-          return this.$message.error("更新学生信息失败！");
-        }
-        // 关闭对话框
-        this.editDialogVisible = false;
-        // 刷新数据列表
-        this.getStudentList();
-        // 提示修改成功
-        this.$message.success("更新学生信息成功！");
-      });
-    },
     // 监听 pagesize 改变的事件
     handleSizeChange(newSize) {
-      //   console.log(newSize);
-
-      this.queryInfo.pagesize = newSize;
-      this.queryInfo.pagenum = 1;
-      this.pageInation(this.queryInfo.pagenum, this.queryInfo.pagesize);
+      this.pagesize = newSize;
+      this.pagenum = 1;
+      this.pageInation(this.pagenum, this.pagesize);
     },
+
     // 监听 页码值 改变的事件
     handleCurrentChange(newPage) {
-      //   console.log(newPage);
-      this.queryInfo.pagenum = newPage;
-      this.pageInation(this.queryInfo.pagenum, this.queryInfo.pagesize);
+      this.pagenum = newPage;
+      this.pageInation(this.pagenum, this.pagesize);
     },
-    // 分页信息
-    async pageInation(pagenum, pagesize) {
-      pagenum = pagenum ? pagenum : this.queryInfo.pagenum;
-      pagesize = pagesize ? pagesize : this.queryInfo.pagesize;
-      let that = this;
+    pageInation(pagenum, pagesize) {
+      pagenum = pagenum ? pagenum : this.pagenum;
+      pagesize = pagesize ? pagesize : this.pagesize;
+      this.total = this.allstudent.length - 1;
       //每次点击更改页码值
-      console.log(pagenum);
-      console.log(pagesize);
-      const { data: res } = await this.$http.get(
-        "http://127.0.0.1:8888/api/admin/studentListPage?currentPage=" +
-          pagenum +
-          "&pageSize=" +
-          pagesize
-      );
-      // .then((res) => {
-      //   if (res.data.data == null || res.data.data.length == 0) {
-      //     //除第一页的其他某页全都删除了的情况：
-      //     that.page.current = that.page.current - 1;
-      //     that.pageInation();
-      //   } else {
-      //     that.studentList = res.data.data;
-      //     that.queryInfo.total = res.data.total;
-      //   }
-      // });
-      console.log(res);
-      this.studentlist = res.data.data;
-      this.queryInfo.total = res.data.total;
+      let begin = (this.pagenum - 1) * this.pagesize;
+      let end = this.pagenum * this.pagesize;
+      this.studentlist = this.allstudent.slice(begin, end);
     },
+    async getCourseTimeList() {
+      let that = this;
+      // var row = this.$store.state.course_row;
+      // var courseno = row.course_no;
+      // var classname = row.class_name;
+      var row = JSON.parse(sessionStorage.getItem("row"));
+      // console.log(row);
+      var courseno = row.course_no;
+      var classname = row.class_name;
+      this.coursedetailslist = row;
+
+      const { data: res } = await this.$http.post(
+        `/api/cms/coursetime/1?_method=GET&course_no=${courseno}`
+      );
+      const { data: res2 } = await this.$http.post(
+        `/api/cms/class/1?_method=GET&class_name=${classname}`
+      );
+      var classno = res2.data[0].class_no;
+      const { data: res3 } = await this.$http.post(
+        `/api/cms/stu/1?_method=GET&class_no=${classno}`
+      );
+      const { data: res4 } = await this.$http.post(
+        `/api/cms/coursetime/1?_method=GET`
+      );
+      //console.log(res);
+      //console.log(res2);
+      console.log(res4);
+
+      this.$set(this.coursedetailslist, "academy", res2.data[0].academy);
+      this.$set(this.coursedetailslist, "num_of_stu", res2.data[0].num_of_stu);
+      this.coursedetails = res.data[0];
+
+      this.allstudent = res3.data;
+      this.total = res3.total;
+      let begin = (that.pagenum - 1) * that.pagesize;
+      let end = that.pagenum * that.pagesize;
+      that.studentlist = that.allstudent.slice(begin, end);
+      //console.log(this.coursedetails);
+    },
+
     clearStudentList() {
-      this.pageInation(this.queryInfo.pagenum, this.queryInfo.pagesize);
-    },
-    async searchStudentList(query) {
-      const { data: res } = await this.$http.get(
-        "http://127.0.0.1:8888/api/admin/searchstudentList?currentquery=" +
-          query
-      );
-      // console.log(res);
-      this.studentlist = res.data;
-      this.queryInfo.total = res.data.length;
+      this.pageInation(this.pagenum, this.pagesize);
     },
   },
 };
 </script>
 
 <style lang="less" scoped>
+.el-row {
+  margin-bottom: 20px;
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+.el-col {
+  border-radius: 4px;
+}
 .box-card {
   margin-bottom: 20px;
 }
@@ -523,10 +339,16 @@ export default {
   font-size: 20px;
 }
 .text {
+  // margin: 10px 0;
   font-size: 20px;
-  display: flex;
-  justify-content: space-around;
+  text-align: center;
   span {
+  }
+  .coursename {
+    font-size: 40px;
+    text-align: center;
+    -webkit-text-stroke: 1px #03fafa;
+    -webkit-text-fill-color: transparent;
   }
 }
 </style>

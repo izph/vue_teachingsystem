@@ -61,7 +61,9 @@ const router = new Router({
           path: "/admin/course/details",
           name: "CourseDetails",
           component: () => import("./views/course/CourseDetails.vue"),
-          meta: { identity: "admin" }
+          meta: {
+            identity: "admin"
+          }
         },
         {
           path: "/admin/course/list",
@@ -97,6 +99,12 @@ const router = new Router({
           path: "/admin/user/add",
           name: "AddUser",
           component: () => import("./views/user/AddUser.vue"),
+          meta: { identity: "admin" }
+        },
+        {
+          path: "/admin/user/allinfo",
+          name: "UserAllInfo",
+          component: () => import("./views/user/UserAllInfo.vue"),
           meta: { identity: "admin" }
         },
         {

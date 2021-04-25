@@ -149,11 +149,15 @@
               <el-menu-item-group>
                 <el-menu-item index="/admin/course/list">
                   <i class="el-icon-menu"></i>
-                  课程信息列表
+                  课程列表
                 </el-menu-item>
                 <el-menu-item index="/admin/course/add">
                   <i class="el-icon-menu"></i>
-                  添加课程信息
+                  添加课程
+                </el-menu-item>
+                <el-menu-item index="/admin/course/details">
+                  <i class="el-icon-menu"></i>
+                  课程详情
                 </el-menu-item>
               </el-menu-item-group>
             </el-submenu>
@@ -167,10 +171,10 @@
                 <el-menu-item index="/admin/info">修改资料</el-menu-item>
               </el-menu-item-group> -->
               <el-menu-item-group>
-                <el-menu-item index="/admin/coursetime/time">
+                <!-- <el-menu-item index="/admin/coursetime/time">
                   <i class="el-icon-menu"></i>
                   上课时间列表
-                </el-menu-item>
+                </el-menu-item> -->
                 <el-menu-item index="/admin/coursetime/add">
                   <i class="el-icon-menu"></i>
                   添加上课时间
@@ -232,6 +236,25 @@
           :key="$route.path"
           :classlist="classlist"
         />
+
+        <!-- 回到顶部代码 -->
+        <el-backtop target=".layui-body" :bottom="100">
+          <div
+            style="
+               {
+                height: 40px;
+                width: 40px;
+                background-color: #f2f5f6;
+                box-shadow: 0 0 6px rgba(0, 0, 0, 0.12);
+                text-align: center;
+                line-height: 40px;
+                color: #1989fa;
+              }
+            "
+          >
+            <i class="el-icon-upload2"></i>
+          </div>
+        </el-backtop>
       </div>
       <div class="layui-footer" style="text-align: center">
         Copyright © 2020-2021 17信计项目小组
