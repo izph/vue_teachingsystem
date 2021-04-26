@@ -105,14 +105,14 @@
               icon-color="red"
               title="确定查看用户个人信息吗？"
               style="margin: 0 15px"
-              @confirm="toUserInfo(scope.row.id)"
+              @confirm="toUserInfo(scope.row)"
             >
               <el-button
                 type="success"
                 icon="el-icon-s-custom"
                 size="small"
                 slot="reference"
-                >查看用户具体信息</el-button
+                >查看用户授课信息</el-button
               >
             </el-popconfirm>
           </template>
@@ -287,12 +287,10 @@ export default {
     addUserInfo() {
       this.$router.push("/admin/user/add");
     },
-    toUserInfo(id) {
+    toUserInfo(row) {
+      sessionStorage.setItem("userrow", JSON.stringify(row));
       this.$router.push({
         name: "UserAllInfo",
-        params: {
-          id,
-        },
       });
     },
     async editUser() {
@@ -363,7 +361,7 @@ export default {
             item.isOK = false;
           });
           this.tableData = datalist;
-          console.log(this.tableData);
+          //console.log(this.tableData);
         }
       });
     },

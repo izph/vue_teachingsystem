@@ -244,7 +244,16 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item label="班级" prop>
-          <el-input v-model="addForm.class_no"></el-input>
+          <!-- <el-input v-model="addForm.class_no"></el-input> -->
+          <el-select v-model="addForm.class_no" placeholder="请选择班级">
+            <el-option
+              v-for="item in options"
+              :key="item.value"
+              :label="item.class_name"
+              :value="item.class_no"
+            >
+            </el-option>
+          </el-select>
         </el-form-item>
 
         <el-form-item label="备注" prop>
@@ -388,7 +397,7 @@ export default {
     //移除监听
   },
   created() {
-    this.getStudentList();
+    //this.getStudentList();
     this.getClassName();
   },
   methods: {

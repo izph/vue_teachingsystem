@@ -195,13 +195,14 @@ export default {
       // this.sendlist.forEach(function (item) {
       //   list.push(item);
       // });
-      console.log(this.sendlist);
 
-      // await this.$http
-      //   .post("/api/cms/grade/1?_method=POST", this.sendlist)
-      //   .then((res) => {
-      //     console.log(res);
-      //   });
+      var data = [...this.sendlist];
+      //console.log(data);
+      await this.$http
+        .post("/api/cms/grade/1?_method=POST", data)
+        .then((res) => {
+          console.log(res);
+        });
     },
     addGrade(form) {
       console.log(form);

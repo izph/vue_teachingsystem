@@ -88,11 +88,11 @@
               </el-menu-item-group> -->
               <el-menu-item-group>
                 <el-menu-item index="/admin/user/info">
-                  <i class="el-icon-menu"></i>
+                  <i class="el-icon-s-unfold"></i>
                   用户信息详情
                 </el-menu-item>
                 <el-menu-item index="/admin/user/add">
-                  <i class="el-icon-menu"></i>
+                  <i class="el-icon-s-unfold"></i>
                   添加用户信息
                 </el-menu-item>
               </el-menu-item-group>
@@ -100,7 +100,7 @@
 
             <el-submenu index="4">
               <template slot="title"
-                ><i class="el-icon-s-promotion"></i>学生信息管理</template
+                ><i class="el-icon-s-custom"></i>学生信息管理</template
               >
               <!-- <el-menu-item-group>
                 <el-menu-item index="/admin/change/pw">修改密码</el-menu-item>
@@ -108,11 +108,11 @@
               </el-menu-item-group> -->
               <el-menu-item-group>
                 <el-menu-item index="/admin/student/list">
-                  <i class="el-icon-menu"></i>
+                  <i class="el-icon-s-unfold"></i>
                   学生信息列表
                 </el-menu-item>
                 <el-menu-item index="/admin/student/add">
-                  <i class="el-icon-menu"></i>
+                  <i class="el-icon-s-unfold"></i>
                   添加学生信息
                 </el-menu-item>
               </el-menu-item-group>
@@ -120,7 +120,7 @@
 
             <el-submenu index="5">
               <template slot="title"
-                ><i class="el-icon-menu"></i>成绩信息管理</template
+                ><i class="el-icon-s-platform"></i>成绩信息管理</template
               >
               <!-- <el-menu-item-group>
                 <el-menu-item index="/admin/change/pw">修改密码</el-menu-item>
@@ -128,11 +128,11 @@
               </el-menu-item-group> -->
               <el-menu-item-group>
                 <el-menu-item index="/admin/grade/info">
-                  <i class="el-icon-menu"></i>
+                  <i class="el-icon-s-unfold"></i>
                   学生成绩列表
                 </el-menu-item>
                 <el-menu-item index="/admin/grade/add">
-                  <i class="el-icon-menu"></i>
+                  <i class="el-icon-s-unfold"></i>
                   批量添加成绩
                 </el-menu-item>
               </el-menu-item-group>
@@ -140,7 +140,7 @@
 
             <el-submenu index="6">
               <template slot="title"
-                ><i class="el-icon-menu"></i>课程信息管理</template
+                ><i class="el-icon-s-order"></i>课程信息管理</template
               >
               <!-- <el-menu-item-group>
                 <el-menu-item index="/admin/change/pw">修改密码</el-menu-item>
@@ -148,15 +148,15 @@
               </el-menu-item-group> -->
               <el-menu-item-group>
                 <el-menu-item index="/admin/course/list">
-                  <i class="el-icon-menu"></i>
+                  <i class="el-icon-s-unfold"></i>
                   课程列表
                 </el-menu-item>
                 <el-menu-item index="/admin/course/add">
-                  <i class="el-icon-menu"></i>
+                  <i class="el-icon-s-unfold"></i>
                   添加课程
                 </el-menu-item>
                 <el-menu-item index="/admin/course/details">
-                  <i class="el-icon-menu"></i>
+                  <i class="el-icon-s-unfold"></i>
                   课程详情
                 </el-menu-item>
               </el-menu-item-group>
@@ -176,7 +176,7 @@
                   上课时间列表
                 </el-menu-item> -->
                 <el-menu-item index="/admin/coursetime/add">
-                  <i class="el-icon-menu"></i>
+                  <i class="el-icon-s-unfold"></i>
                   添加上课时间
                 </el-menu-item>
               </el-menu-item-group>
@@ -184,7 +184,7 @@
 
             <el-submenu index="8">
               <template slot="title"
-                ><i class="el-icon-menu"></i>班级信息管理</template
+                ><i class="el-icon-s-data"></i>班级信息管理</template
               >
               <!-- <el-menu-item-group>
                 <el-menu-item index="/admin/change/pw">修改密码</el-menu-item>
@@ -192,11 +192,11 @@
               </el-menu-item-group> -->
               <el-menu-item-group>
                 <el-menu-item index="/admin/class/info">
-                  <i class="el-icon-menu"></i>
+                  <i class="el-icon-s-unfold"></i>
                   班级信息列表
                 </el-menu-item>
                 <el-menu-item index="/admin/class/add">
-                  <i class="el-icon-menu"></i>
+                  <i class="el-icon-s-unfold"></i>
                   添加班级信息
                 </el-menu-item>
               </el-menu-item-group>
@@ -204,12 +204,12 @@
 
             <el-submenu index="9">
               <template slot="title"
-                ><i class="el-icon-menu"></i>抽查信息管理</template
+                ><i class="el-icon-s-tools"></i>抽查信息管理</template
               >
 
               <el-menu-item-group>
                 <el-menu-item index="/admin/inspection/info">
-                  <i class="el-icon-menu"></i>
+                  <i class="el-icon-s-unfold"></i>
                   学生抽查信息
                 </el-menu-item>
               </el-menu-item-group>
@@ -217,12 +217,12 @@
 
             <el-submenu index="10">
               <template slot="title"
-                ><i class="el-icon-menu"></i>出勤信息管理</template
+                ><i class="el-icon-s-promotion"></i>出勤信息管理</template
               >
 
               <el-menu-item-group>
                 <el-menu-item index="/admin/attendance/info">
-                  <i class="el-icon-menu"></i>
+                  <i class="el-icon-s-unfold"></i>
                   学生出勤信息
                 </el-menu-item>
               </el-menu-item-group>
@@ -352,7 +352,7 @@ export default {
               class_list[index].label = item.class_name;
             });
             this.classlist = class_list;
-            // console.log(this.classlist);
+            console.log(this.classlist);
           }
         });
     },
