@@ -289,7 +289,8 @@ $cursor: #000;
   min-height: 630px;
   width: 100%;
   // background: url(../../img/index_bg.png) no-repeat;
-  background: url(../../assets/huqlogo07.jpg) repeat;
+  background: url(../../assets/hqulogo02.jpg) no-repeat;
+  background-size: 1;
   position: relative;
   .el-input__inner {
     margin-left: 20px;

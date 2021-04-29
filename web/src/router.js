@@ -8,7 +8,9 @@ import Router from 'vue-router'
 Vue.use(Router);
 
 const router = new Router({
-  "mode": "history",
+  //"mode": "history",
+  mode: 'hash',
+  base: '/dist',
   routes: [
     // 一个映射就是一个对象
     {
@@ -31,7 +33,10 @@ const router = new Router({
           path: "/admin/index",
           name: "Home",
           component: () => import("./views/admin/AdminHome.vue"),
-          meta: { identity: "admin" },
+          meta: {
+            identity: "admin",
+          },
+
         },
         {
           path: "/admin/info",

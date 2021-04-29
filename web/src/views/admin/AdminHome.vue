@@ -1,10 +1,6 @@
 <template>
   <div class="home">
     <div class="container">
-      <!-- <h1 class="title">教学管理系统</h1>
-      <p class="lead">
-        基于Vue.js(ElementUI)+Node.js(Express)+Mongodb(mongoose)开发
-      </p> -->
       <el-row :gutter="45">
         <el-col :span="6"
           ><div class="grid-content bg-purple">
@@ -18,7 +14,7 @@
         <el-col :span="6"
           ><div class="grid-content bg-purple">
             <div><img src="../../assets/2.png" alt="" /></div>
-            <div class="item-font">
+            <div class="item-font" @click="toAnnouncement">
               <p>通知公告</p>
               <p>20</p>
             </div>
@@ -43,6 +39,9 @@
           </div></el-col
         >
       </el-row>
+      <div>
+        <router-view :key="$route.path" />
+      </div>
     </div>
   </div>
 </template>
@@ -50,6 +49,11 @@
 <script>
 export default {
   name: "Home",
+  methods: {
+    toAnnouncement() {
+      this.$router.push("/admin/announcement");
+    },
+  },
 };
 </script>
 
@@ -57,8 +61,9 @@ export default {
 .home {
   width: 100%;
   height: 100%;
-  background: url(../../assets/huqlogo07.jpg);
-  background-size: 100% 100%;
+  background: url(../../assets/hqulogo07.jpg);
+  /* background-size: 100% 100%; */
+  background-size: cover;
 }
 /*
 .container {

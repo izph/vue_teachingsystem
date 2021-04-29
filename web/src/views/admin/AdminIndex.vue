@@ -34,6 +34,7 @@
                   <el-dropdown-item command="changeadminpassword"
                     >修改密码</el-dropdown-item
                   >
+
                   <el-dropdown-item command="logout">退出登录</el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
@@ -49,35 +50,6 @@
             active-text-color="#66ccff"
             router
           >
-            <!-- <el-submenu index="1">
-              <template slot="title"
-                ><i class="el-icon-menu"></i>第二学期</template
-              >
-              
-              <el-menu-item-group>
-                <el-menu-item
-                  index="/admin/student/info"
-                  v-for="item in courselist"
-                  :key="item.id"
-                  >{{ item.coursename + item.grade }}</el-menu-item
-                >
-              </el-menu-item-group>
-            </el-submenu> -->
-
-            <!-- <el-submenu index="2">
-              <template slot="title"
-                ><i class="el-icon-menu"></i>第一学期</template
-              >
-              
-              <el-menu-item-group>
-                <el-menu-item index="/admin/course/info">
-                  班级信息
-                </el-menu-item>
-                <el-menu-item index="/admin/course/info"> 点名 </el-menu-item>
-                <el-menu-item index="/admin/course/info"> 抽查 </el-menu-item>
-              </el-menu-item-group>
-            </el-submenu> -->
-
             <el-submenu index="3">
               <template slot="title"
                 ><i class="el-icon-s-custom"></i>用户信息管理</template

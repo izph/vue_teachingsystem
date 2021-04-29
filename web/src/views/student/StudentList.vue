@@ -45,6 +45,7 @@
             filterable
             placeholder="请选择班级"
             style="margin: 0 15px"
+            clearable
             @change="getDesignatedClass(value)"
           >
             <el-option
@@ -231,19 +232,19 @@
         ref="addFormRef"
         label-width="70px"
       >
-        <el-form-item label="姓名" prop>
+        <el-form-item label="姓名" prop="student_name">
           <el-input v-model="addForm.student_name"></el-input>
         </el-form-item>
-        <el-form-item label="学号" prop>
+        <el-form-item label="学号" prop="student_no">
           <el-input v-model="addForm.student_no"></el-input>
         </el-form-item>
-        <el-form-item label="性别" prop>
+        <el-form-item label="性别" prop="gender">
           <el-radio-group v-model="addForm.gender">
             <el-radio label="male">男</el-radio>
             <el-radio label="female">女</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="班级" prop>
+        <el-form-item label="班级" prop="class_no">
           <!-- <el-input v-model="addForm.class_no"></el-input> -->
           <el-select v-model="addForm.class_no" placeholder="请选择班级">
             <el-option
@@ -256,19 +257,13 @@
           </el-select>
         </el-form-item>
 
-        <el-form-item label="备注" prop>
+        <el-form-item label="备注" prop="remark">
           <el-input v-model="addForm.remark"></el-input>
         </el-form-item>
-
-        <!-- 班级信息卡 -->
-        <!-- <el-card class="box-card">
-          <div v-for="item in options" :key="item.class_no" class="text item">
-            {{ item.class_name + "---" + item.class_no }}
-          </div>
-        </el-card> -->
       </el-form>
       <!-- 底部区域 -->
       <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="addResetForm()">重置</el-button>
         <el-button @click="addDialogVisible = false">取 消</el-button>
         <el-button type="primary" @click="addStudent">确 定</el-button>
       </span>
@@ -436,7 +431,7 @@ export default {
     pageInation(pagenum, pagesize) {
       pagenum = pagenum ? pagenum : this.pagenum;
       pagesize = pagesize ? pagesize : this.pagesize;
-      this.total = this.allstudent.length - 1;
+      this.total = this.allstudent.length;
       //每次点击更改页码值
       let begin = (this.pagenum - 1) * this.pagesize;
       let end = this.pagenum * this.pagesize;
@@ -494,6 +489,7 @@ export default {
         });
     },
     async getStudentList() {
+      this.value = "";
       let that = this;
       await this.$http
         .post("/api/cms/stu/1?_method=GET&pagenum=1&pagesize=10")
@@ -537,6 +533,9 @@ export default {
     addDialogClosed() {
       this.$refs.addFormRef.resetFields();
     },
+    addResetForm() {
+      this.$refs.addFormRef.resetFields();
+    },
     // 点击按钮，添加学生
     addStudent() {
       this.$refs.addFormRef.validate(async (valid) => {
@@ -544,7 +543,7 @@ export default {
         // 可以发起添加用户的网络请求
         console.log(this.addForm);
         this.$http
-          .post("/api/cms/stu/1?_method=POST", [
+          .post("/api/api/cms/stu/1?_method=POST", [
             {
               student_name: this.addForm.student_name,
               student_no: this.addForm.student_no,

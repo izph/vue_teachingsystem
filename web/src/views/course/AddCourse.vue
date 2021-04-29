@@ -214,7 +214,7 @@ export default {
   methods: {
     async getClassName() {
       await this.$http
-        .post("/api/cms/class/1?_method=GET&class_no=")
+        .post("/cms/class/1?_method=GET&class_no=")
         .then((res) => {
           console.log(res);
           if (res.status === 200) {
@@ -239,7 +239,7 @@ export default {
         if (!valid) return;
         // console.log(this.ruleForm);
         this.$http
-          .post("/api/cms/curs/1?_method=POST", [
+          .post("/cms/curs/1?_method=POST", [
             {
               course_no: this.ruleForm.course_no,
               course_name: this.ruleForm.course_name,

@@ -198,11 +198,9 @@ export default {
 
       var data = [...this.sendlist];
       //console.log(data);
-      await this.$http
-        .post("/api/cms/grade/1?_method=POST", data)
-        .then((res) => {
-          console.log(res);
-        });
+      await this.$http.post("/cms/grade/1?_method=POST", data).then((res) => {
+        console.log(res);
+      });
     },
     addGrade(form) {
       console.log(form);

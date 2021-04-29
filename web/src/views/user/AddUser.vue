@@ -79,7 +79,7 @@ export default {
       var remark = sessionStorage.getItem("remark");
       if (remark == "admin") {
         await this.$http
-          .post("/api/cms/user/1?_method=POST", [
+          .post("/cms/user/1?_method=POST", [
             {
               user_name: this.form.user_name,
               staff_no: this.form.staff_no,

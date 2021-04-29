@@ -30,10 +30,10 @@
           </el-input>
         </el-col>
         <el-col :span="12">
-          <el-button type="primary" @click="addDialogVisible = true"
+          <!-- <el-button type="primary" @click="addDialogVisible = true"
             >添加学生</el-button
-          >
-          <el-button type="success" @click="exportExcel">导出数据</el-button>
+          > -->
+          <el-button type="success" @click="outExcel()">导出数据</el-button>
           <el-button type="danger" @click="getStudentList()"
             >显示所有学生</el-button
           >
@@ -43,6 +43,7 @@
             filterable
             placeholder="请选择课程名称"
             style="margin: 0 15px"
+            clearable
             @change="getDesignatedCourse(value)"
           >
             <el-option
@@ -57,7 +58,7 @@
       </el-row>
 
       <!-- 成绩列表区域 -->
-      <el-table :data="gradeinfo" border stripe current-row-key>
+      <el-table :data="gradeinfo" border stripe current-row-key id="out-table">
         <el-table-column
           type="index"
           align="center"
@@ -189,7 +190,7 @@
 
     <!-- 修改学生信息 -->
     <el-dialog
-      title="修改学生信息"
+      title="修改学生成绩"
       :visible.sync="editDialogVisible"
       width="50%"
       @close="editDialogClosed"
@@ -202,30 +203,33 @@
         ref="editFormRef"
         label-width="70px"
       >
-        <el-form-item label="姓名">
+        <el-form-item label="姓名" prop="student_name">
           <el-input v-model="editForm.student_name"></el-input>
         </el-form-item>
-        <el-form-item label="学号">
+        <el-form-item label="学号" prop="student_no">
           <el-input v-model="editForm.student_no"></el-input>
         </el-form-item>
-        <el-form-item label="性别">
-          <el-radio-group v-model="editForm.gender">
-            <el-radio label="male">男</el-radio>
-            <el-radio label="female">女</el-radio>
-          </el-radio-group>
+        <el-form-item label="课程" prop="course_no">
+          <el-select v-model="addForm.course_no" placeholder="请选择课程名称">
+            <el-option
+              v-for="item in options"
+              :key="item.course_no"
+              :label="item.course_name"
+              :value="item.course_no"
+            >
+            </el-option>
+          </el-select>
         </el-form-item>
-        <el-form-item label="班级号">
-          <el-input v-model="editForm.class_no"></el-input>
+        <el-form-item label="平时" prop="usual">
+          <el-input v-model="editForm.usual"></el-input>
         </el-form-item>
-        <el-form-item label="备注">
-          <el-input v-model="editForm.remark"></el-input>
+        <el-form-item label="期末" prop="end_of_term">
+          <el-input v-model="editForm.end_of_term"></el-input>
         </el-form-item>
 
-        <!-- <el-card class="box-card">
-          <div v-for="item in options" :key="item.class_no" class="text item">
-            {{ item.class_name + "---" + item.class_no }}
-          </div>
-        </el-card> -->
+        <el-form-item label="备注" prop="remark">
+          <el-input v-model="editForm.remark"></el-input>
+        </el-form-item>
       </el-form>
 
       <!-- 底部区域 -->
@@ -250,34 +254,37 @@
         ref="addFormRef"
         label-width="70px"
       >
-        <el-form-item label="姓名" prop>
+        <el-form-item label="姓名" prop="student_name">
           <el-input v-model="addForm.student_name"></el-input>
         </el-form-item>
-        <el-form-item label="学号" prop>
+        <el-form-item label="学号" prop="student_no">
           <el-input v-model="addForm.student_no"></el-input>
         </el-form-item>
-        <el-form-item label="性别" prop>
-          <el-radio-group v-model="addForm.gender">
-            <el-radio label="male">男</el-radio>
-            <el-radio label="female">女</el-radio>
-          </el-radio-group>
+        <el-form-item label="课程名称" prop="course_no">
+          <el-select v-model="addForm.course_no" placeholder="请选择课程名称">
+            <el-option
+              v-for="item in options"
+              :key="item.course_no"
+              :label="item.course_name"
+              :value="item.course_no"
+            >
+            </el-option>
+          </el-select>
         </el-form-item>
-        <el-form-item label="班级" prop>
-          <el-input v-model="addForm.class_no"></el-input>
+        <el-form-item label="平时成绩" prop="usual">
+          <el-input v-model="addForm.usual"></el-input>
+        </el-form-item>
+        <el-form-item label="期末成绩" prop="end_of_term">
+          <el-input v-model="addForm.end_of_term"></el-input>
         </el-form-item>
 
-        <el-form-item label="备注" prop>
+        <el-form-item label="备注" prop="remark">
           <el-input v-model="addForm.remark"></el-input>
         </el-form-item>
-
-        <!-- <el-card class="box-card">
-          <div v-for="item in options" :key="item.class_no" class="text item">
-            {{ item.class_name + "---" + item.class_no }}
-          </div>
-        </el-card> -->
       </el-form>
       <!-- 底部区域 -->
       <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="addResetGrade">重置</el-button>
         <el-button @click="addDialogVisible = false">取 消</el-button>
         <el-button type="primary" @click="addStudent">确 定</el-button>
       </span>
@@ -286,6 +293,8 @@
 </template>
 
 <script>
+import FileSaver from "file-saver";
+import XLSX from "xlsx";
 export default {
   filters: {
     filterGrade(grade) {
@@ -330,7 +339,6 @@ export default {
       addForm: {
         student_name: "",
         student_no: "",
-        gender: "",
         class_no: "",
         remark: "",
       },
@@ -344,14 +352,15 @@ export default {
           },
         ],
         student_no: [
-          { required: true, message: "请输入9位数的学号", trigger: "blur" },
+          { required: true, message: "请输入学生的学号", trigger: "blur" },
           {
-            message: "请输入9位数的学号",
+            message: "请输入学生的学号",
             trigger: "blur",
           },
         ],
-        gender: [{ required: true, trigger: "blur" }],
-        class_no: [
+        end_of_term: [{ required: true, trigger: "blur" }],
+        usual: [{ required: true, trigger: "blur" }],
+        course_no: [
           { required: true, message: "请输入点名信息", trigger: "blur" },
           //   { validator: checkMobile, trigger: "blur" },
         ],
@@ -364,32 +373,26 @@ export default {
       // 修改表单的验证规则对象
       editFormRules: {
         student_name: [
-          {
-            required: true,
-            message: "请输入学生姓名",
-            trigger: "blur",
-          },
+          { required: true, message: "请输入学生姓名", trigger: "blur" },
           {
             message: "姓名的长度在1~6个字符之间",
             trigger: "blur",
           },
         ],
         student_no: [
+          { required: true, message: "请输入学生的学号", trigger: "blur" },
           {
-            required: true,
-            message: "请输入10位数的学号",
+            message: "请输入学生的学号",
             trigger: "blur",
           },
         ],
-        gender: [{ required: true, trigger: "blur" }],
-        class_no: [
-          {
-            required: true,
-            message: "请输入8位班级编号",
-            trigger: "blur",
-          },
+        end_of_term: [{ required: true, trigger: "blur" }],
+        usual: [{ required: true, trigger: "blur" }],
+        course_no: [
+          { required: true, message: "请输入点名信息", trigger: "blur" },
+          //   { validator: checkMobile, trigger: "blur" },
         ],
-        // remark: [{ required: true, message: "请选择备注", trigger: "blur" }],
+        remark: [{ message: "请填写备注信息", trigger: "blur" }],
       },
       // 控制分配角色对话框的显示与隐藏
       setRoleDialogVisible: false,
@@ -405,16 +408,33 @@ export default {
     // 计算一共有几页
     // this.total = Math.ceil(this.addStudent.length / this.pagesize);
     this.pageInation(this.pagenum, this.pagesize);
-    // 计算得0时设置为1
-    // this.total = this.total == 0 ? 1 : this.total;
-    // this.handleSizeChange();
   },
 
   created() {
     //this.getStudentList();
     this.getCourseName();
+    this.getClassName();
   },
   methods: {
+    outExcel() {
+      /* out-table关联导出的dom节点  */
+      var wb = XLSX.utils.table_to_book(document.querySelector("#out-table"));
+      /* get binary string as output */
+      var wbout = XLSX.write(wb, {
+        bookType: "xlsx",
+        bookSST: true,
+        type: "array",
+      });
+      try {
+        FileSaver.saveAs(
+          new Blob([wbout], { type: "application/octet-stream" }),
+          `学生成绩信息.xlsx`
+        );
+      } catch (e) {
+        if (typeof console !== "undefined") console.log(e, wbout);
+      }
+      return wbout;
+    },
     filterColor(grade) {
       if (grade >= 90) {
         return "primary";
@@ -444,15 +464,34 @@ export default {
       pagenum = pagenum ? pagenum : this.pagenum;
       pagesize = pagesize ? pagesize : this.pagesize;
       //console.log(this.allgrade.length - 1);
-      this.total = this.allgrade.length - 1;
+      this.total = this.allgrade.length;
       //每次点击更改页码值
       let begin = (this.pagenum - 1) * this.pagesize;
       let end = this.pagenum * this.pagesize;
       this.gradeinfo = this.allgrade.slice(begin, end);
     },
     // 获取班级
+    async getClassName() {
+      await this.$http
+        .post("/api/cms/class/1?_method=GET&class_no=")
+        .then((res) => {
+          if (res.status === 200) {
+            var list = res.data.data;
+            var class_list = [];
+
+            list.forEach(function (item, index) {
+              class_list[index] = {};
+
+              class_list[index].value = item.class_no;
+              class_list[index].label = item.class_name;
+            });
+            this.classlist = class_list;
+            console.log(this.classlist);
+          }
+        });
+    },
+    // 获取班级
     async getDesignatedCourse(value) {
-      console.log(value);
       value = value + "";
       let that = this;
       await this.$http
@@ -476,7 +515,7 @@ export default {
     filterHandler(value, row, column) {
       return row.class_name === value;
     },
-    exportExcel() {},
+
     async getCourseName() {
       await this.$http.post("/api/cms/curs/1?_method=GET").then((res) => {
         console.log(res);
@@ -502,6 +541,7 @@ export default {
       });
     },
     async getStudentList() {
+      this.value = "";
       let that = this;
       await this.$http.post("/api/cms/grade/1?_method=GET").then((res) => {
         console.log(res);
@@ -513,29 +553,13 @@ export default {
         let end = that.pagenum * that.pagesize;
         that.gradeinfo = that.allgrade.slice(begin, end);
       });
-      //   if (res.meta.status !== 200) {
-      //     return this.$message.error("获取用户列表失败！");
-      //   }
-      //   console.log(res.data);
-      //this.studentlist = res.data;
-      //   this.total = res.data.total;
-      //   console.log(res);
     },
 
-    // 监听 switch 开关状态的改变
-    async userStateChanged(userinfo) {
-      console.log(userinfo);
-      const { data: res } = await this.$http.put(
-        `users/${userinfo.id}/state/${userinfo.mg_state}`
-      );
-      if (res.meta.status !== 200) {
-        userinfo.mg_state = !userinfo.mg_state;
-        return this.$message.error("更新用户状态失败！");
-      }
-      this.$message.success("更新用户状态成功！");
-    },
     // 监听添加用户对话框的关闭事件
     addDialogClosed() {
+      this.$refs.addFormRef.resetFields();
+    },
+    addResetGrade() {
       this.$refs.addFormRef.resetFields();
     },
     // 点击按钮，添加学生
@@ -544,28 +568,30 @@ export default {
         if (!valid) return;
         // 可以发起添加用户的网络请求
         console.log(this.addForm);
-        this.$http
-          .post("/api/cms/stu/1?_method=POST", [
-            {
-              student_name: this.addForm.student_name,
-              student_no: this.addForm.student_no,
-              class_no: this.addForm.class_no,
-              gender: this.addForm.gender,
-              remark: this.addForm.remark,
-            },
-          ])
-          .then((res) => {
-            if (res.status != 200) {
-              // 提示修改失败
-              return this.$message.error("更新学生信息失败！");
-            }
-            // 关闭对话框
-            this.addDialogVisible = false;
-            // 刷新数据列表
-            this.getStudentList();
-            // 提示修改成功
-            this.$message.success("添加学生信息成功！");
-          });
+        var coursenum = this.addForm.course_no;
+        // this.$http
+        //   .post("/api/cms/grade/1?_method=POST", [
+        //     {
+        //       student_no: this.addForm.student_no,
+        //       course_no: this.addForm.course_no,
+        //       usual: this.addForm.usual,
+        //       end_of_term: this.addForm.end_of_term,
+        //       remark: this.addForm.remark,
+        //     },
+        //   ])
+        //   .then((res) => {
+        //     if (res.status != 200) {
+        //       // 提示修改失败
+        //       return this.$message.error("添加学生成绩失败！");
+        //     }
+        //     // 关闭对话框
+        //     this.editDialogVisible = false;
+        //     // 刷新数据列表
+        //     //this.getStudentList();
+        //     // 提示修改成功
+        //     this.$message.success("添加学生成绩成功！");
+        //     this.getDesignatedCourse(coursenum);
+        //   });
       });
     },
     // 删除学生
@@ -585,26 +611,28 @@ export default {
       });
     },
     // 展示编辑用户的对话框
-    async showEditDialog(row) {
+    showEditDialog(row) {
       this.editDialogVisible = true;
-      var stu_no = row.student_no;
+      this.editForm = row;
+      this.$set(this.editForm, "remark", "");
 
-      await this.$http
-        .post(`/api/cms/stu/1?_method=GET&student_no=${stu_no}`)
-        .then((res) => {
-          console.log(res);
-          if (res.status === 200) {
-            // this.editForm.student_no = res.data.data[0].student_no;
-            // this.editForm.student_name = res.data.data[0].student_name;
-            // this.editForm.gender = res.data.data[0].gender;
-            this.editForm = res.data.data[0];
-          }
-          this.$set(this.editForm, "remark", "");
-          this.$set(this.editForm, "class_no", "");
-          // this.editForm.remark = "";
-          // this.editForm.class_no = "";
-          console.log(this.editForm);
-        });
+      // await this.$http
+      //   .post(`/api/cms/stu/1?_method=GET&student_no=${stu_no}`)
+      //   .then((res) => {
+      //     console.log(res);
+      //     if (res.status === 200) {
+      //       // this.editForm.student_no = res.data.data[0].student_no;
+      //       // this.editForm.student_name = res.data.data[0].student_name;
+      //       // this.editForm.gender = res.data.data[0].gender;
+      //       this.editForm = res.data.data[0];
+      //     }
+      //     this.$set(this.editForm, "remark", "");
+      //     // this.$set(this.editForm, "class_no", "");
+      //     // this.editForm.course_no = row.course_no;
+      //     this.editForm.usual = row.usual;
+      //     this.editForm.end_of_term = row.end_of_term;
+      //     console.log(this.editForm);
+      //   });
     },
     // 监听修改用户对话框的关闭事件
     editDialogClosed() {
@@ -615,28 +643,29 @@ export default {
       this.$refs.editFormRef.validate((valid) => {
         if (!valid) return;
         // 发起修改学生信息的数据请求
-        //console.log(this.editForm);
+        var coursenum = this.editForm.course_no;
         this.$http
-          .post("/api/cms/stu/1?_method=POST", [
+          .post("/api/cms/grade/1?_method=POST", [
             {
-              student_name: this.editForm.student_name,
               student_no: this.editForm.student_no,
-              class_no: this.editForm.class_no,
-              gender: this.editForm.gender,
+              course_no: this.editForm.course_no,
+              usual: this.editForm.usual,
+              end_of_term: this.editForm.end_of_term,
               remark: this.editForm.remark,
             },
           ])
           .then((res) => {
             if (res.status != 200) {
               // 提示修改失败
-              return this.$message.error("更新学生信息失败！");
+              return this.$message.error("更新学生成绩失败！");
             }
             // 关闭对话框
             this.editDialogVisible = false;
             // 刷新数据列表
-            this.getStudentList();
+            //this.getStudentList();
             // 提示修改成功
-            this.$message.success("更新学生信息成功！");
+            this.$message.success("更新学生成绩成功！");
+            this.getDesignatedCourse(coursenum);
           });
       });
     },

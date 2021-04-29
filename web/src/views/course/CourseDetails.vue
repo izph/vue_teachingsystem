@@ -12,9 +12,8 @@
             }}</span></el-col
           >
           <el-col :span="6"
-            ><span class="classsize">{{
-              "上课日期: " + coursedetails.weekday
-            }}</span></el-col
+            ><span>{{ "上课日期: " }}</span
+            ><span>{{ coursedetails.weekday | filterDay }}</span></el-col
           >
           <el-col :span="6"
             ><span class="classtime">{{
@@ -143,6 +142,32 @@
 
 <script>
 export default {
+  filters: {
+    filterDay(value) {
+      switch (value) {
+        case "Mon":
+          return "星期一";
+          break;
+        case "Tue":
+          return "星期二";
+          break;
+        case "Wed":
+          return "星期三";
+          break;
+        case "Thu":
+          return "星期四";
+          break;
+        case "Fri":
+          return "星期五";
+          break;
+        case "Sat":
+          return "星期六";
+          break;
+        default:
+          return "星期天";
+      }
+    },
+  },
   data() {
     return {
       // 当前的页数
@@ -286,17 +311,17 @@ export default {
       this.coursedetailslist = row;
 
       const { data: res } = await this.$http.post(
-        `/api/cms/coursetime/1?_method=GET&course_no=${courseno}`
+        `/cms/coursetime/1?_method=GET&course_no=${courseno}`
       );
       const { data: res2 } = await this.$http.post(
-        `/api/cms/class/1?_method=GET&class_name=${classname}`
+        `/cms/class/1?_method=GET&class_name=${classname}`
       );
       var classno = res2.data[0].class_no;
       const { data: res3 } = await this.$http.post(
-        `/api/cms/stu/1?_method=GET&class_no=${classno}`
+        `/cms/stu/1?_method=GET&class_no=${classno}`
       );
       const { data: res4 } = await this.$http.post(
-        `/api/cms/coursetime/1?_method=GET`
+        `/cms/coursetime/1?_method=GET`
       );
       //console.log(res);
       //console.log(res2);

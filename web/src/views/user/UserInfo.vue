@@ -299,7 +299,7 @@ export default {
         // 发起修改用户信息的数据请求
         console.log(this.editForm);
         this.$http
-          .post("/api/cms/user/1?_method=POST", [
+          .post("/cms/user/1?_method=POST", [
             {
               user_name: this.editForm.user_name,
               staff_no: this.editForm.staff_no,
@@ -339,7 +339,7 @@ export default {
       if (remark == "admin") {
         //console.log(id);
         await this.$http
-          .post(`/api/cms/user/1?_method=DELETE&id=${id}`)
+          .post(`/cms/user/1?_method=DELETE&id=${id}`)
           .then((res) => {
             //console.log(res);
             if (res.status === 200) {
@@ -351,7 +351,7 @@ export default {
       }
     },
     async getUserInfo() {
-      await this.$http.post("/api/cms/user/1?_method=GET").then((res) => {
+      await this.$http.post("/cms/user/1?_method=GET").then((res) => {
         console.log(res);
         if (res.status === 200) {
           var datalist = [];
