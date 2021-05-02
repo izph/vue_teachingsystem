@@ -1,5 +1,5 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
+import Vue from "vue";
+import Vuex from "vuex";
 
 Vue.use(Vuex);
 
@@ -10,12 +10,8 @@ export default new Vuex.Store({
       // user_name: '',
       // staff_no: ''
     },
-    class_no_name: {
-
-    },
-    course_row: {
-
-    }
+    class_no_name: {},
+    course_row: {},
   },
   mutations: {
     setHouseMasterId(state, HouseMasterId) {
@@ -25,8 +21,8 @@ export default new Vuex.Store({
       state.StudentId = StudentId;
     },
     setCourserow(state, row) {
-      state.course_row = row
-    }
+      state.course_row = row;
+    },
   },
-  actions: {}
-})
+  actions: {},
+});

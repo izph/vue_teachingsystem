@@ -3,10 +3,7 @@
     <div class="layui-layout layui-layout-admin">
       <div class="layui-header">
         <el-button type="prma" @click="logout">退出</el-button>
-        <router-link
-          tag="div"
-          class="layui-logo teachingsystem"
-          to="/admin/index"
+        <router-link tag="div" class="layui-logo teachingsystem" to="/admin/index"
           >教学管理系统
         </router-link>
         <ul class="layui-nav layui-layout-right">
@@ -27,9 +24,7 @@
                   }}<i class="el-icon-arrow-down el-icon--right"></i>
                 </span>
                 <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item command="personInfo"
-                    >个人信息</el-dropdown-item
-                  >
+                  <el-dropdown-item command="personInfo">个人信息</el-dropdown-item>
 
                   <el-dropdown-item command="changeadminpassword"
                     >修改密码</el-dropdown-item
@@ -163,9 +158,7 @@
             </el-submenu>
 
             <el-submenu index="7">
-              <template slot="title"
-                ><i class="el-icon-menu"></i>上课时间管理</template
-              >
+              <template slot="title"><i class="el-icon-menu"></i>上课时间管理</template>
               <!-- <el-menu-item-group>
                 <el-menu-item index="/admin/change/pw">修改密码</el-menu-item>
                 <el-menu-item index="/admin/info">修改资料</el-menu-item>
@@ -183,9 +176,7 @@
             </el-submenu>
 
             <el-submenu index="8">
-              <template slot="title"
-                ><i class="el-icon-s-data"></i>班级信息管理</template
-              >
+              <template slot="title"><i class="el-icon-s-data"></i>班级信息管理</template>
               <!-- <el-menu-item-group>
                 <el-menu-item index="/admin/change/pw">修改密码</el-menu-item>
                 <el-menu-item index="/admin/info">修改资料</el-menu-item>
@@ -195,10 +186,10 @@
                   <i class="el-icon-s-unfold"></i>
                   班级信息列表
                 </el-menu-item>
-                <el-menu-item index="/admin/class/add">
+                <!-- <el-menu-item index="/admin/class/add">
                   <i class="el-icon-s-unfold"></i>
                   添加班级信息
-                </el-menu-item>
+                </el-menu-item> -->
               </el-menu-item-group>
             </el-submenu>
 
@@ -231,11 +222,7 @@
         </div>
       </div>
       <div class="layui-body">
-        <router-view
-          :userInfo="userInfo"
-          :key="$route.path"
-          :classlist="classlist"
-        />
+        <router-view :userInfo="userInfo" :key="$route.path" :classlist="classlist" />
 
         <!-- 回到顶部代码 -->
         <el-backtop target=".layui-body" :bottom="100">
@@ -338,23 +325,21 @@ export default {
       });
     },
     async getClassName() {
-      await this.$http
-        .post("/api/cms/class/1?_method=GET&class_no=")
-        .then((res) => {
-          if (res.status === 200) {
-            var list = res.data.data;
-            var class_list = [];
+      await this.$http.post("/api/cms/class/1?_method=GET&class_no=").then((res) => {
+        if (res.status === 200) {
+          var list = res.data.data;
+          var class_list = [];
 
-            list.forEach(function (item, index) {
-              class_list[index] = {};
+          list.forEach(function (item, index) {
+            class_list[index] = {};
 
-              class_list[index].value = item.class_no;
-              class_list[index].label = item.class_name;
-            });
-            this.classlist = class_list;
-            console.log(this.classlist);
-          }
-        });
+            class_list[index].value = item.class_no;
+            class_list[index].label = item.class_name;
+          });
+          this.classlist = class_list;
+          console.log(this.classlist);
+        }
+      });
     },
   },
   created() {

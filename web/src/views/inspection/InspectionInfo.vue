@@ -26,9 +26,7 @@
           </el-input>
         </el-col>
         <el-col :span="4">
-          <el-button type="primary" @click="addDialogVisible = true"
-            >添加用户</el-button
-          >
+          <el-button type="primary" @click="addDialogVisible = true">添加用户</el-button>
         </el-col>
         <el-col :span="4">
           <el-button type="success" @click="exportExcel">导出数据</el-button>
@@ -64,21 +62,9 @@
           prop="time_frame"
           align="center"
         ></el-table-column>
-        <el-table-column
-          label="weekday"
-          prop="weekday"
-          align="center"
-        ></el-table-column>
-        <el-table-column
-          label="第几周"
-          prop="week"
-          align="center"
-        ></el-table-column>
-        <el-table-column
-          label="抽查得分"
-          prop="score"
-          align="center"
-        ></el-table-column>
+        <el-table-column label="weekday" prop="weekday" align="center"></el-table-column>
+        <el-table-column label="第几周" prop="week" align="center"></el-table-column>
+        <el-table-column label="抽查得分" prop="score" align="center"></el-table-column>
         <el-table-column label="操作" align="center">
           <!-- <template slot-scope="scope">
             <el-switch
@@ -105,11 +91,7 @@
               title="确定删除当前学生记录吗？"
               @confirm="removeStudent(scope.row.studyno)"
             >
-              <el-button
-                type="danger"
-                icon="el-icon-delete"
-                size="mini"
-                slot="reference"
+              <el-button type="danger" icon="el-icon-delete" size="mini" slot="reference"
                 >删除</el-button
               >
             </el-popconfirm>
@@ -181,12 +163,7 @@
       :append-to-body="true"
     >
       <!-- 内容主体区域 -->
-      <el-form
-        :model="addForm"
-        :rules="addFormRules"
-        ref="addFormRef"
-        label-width="70px"
-      >
+      <el-form :model="addForm" :rules="addFormRules" ref="addFormRef" label-width="70px">
         <el-form-item label="姓名" prop="studyname">
           <el-input v-model="addForm.studyname"></el-input>
         </el-form-item>
@@ -312,9 +289,7 @@ export default {
             trigger: "blur",
           },
         ],
-        studyno: [
-          { required: true, message: "请输入9位数的学号", trigger: "blur" },
-        ],
+        studyno: [{ required: true, message: "请输入9位数的学号", trigger: "blur" }],
         sex: [{ required: true, trigger: "blur" }],
         rollcall: [
           { required: true, message: "请输入点名信息", trigger: "blur" },
@@ -496,8 +471,7 @@ export default {
     },
     async searchStudentList(query) {
       const { data: res } = await this.$http.get(
-        "http://127.0.0.1:8888/api/admin/searchstudentList?currentquery=" +
-          query
+        "http://127.0.0.1:8888/api/admin/searchstudentList?currentquery=" + query
       );
       console.log(res);
       this.studentlist = res.data;
