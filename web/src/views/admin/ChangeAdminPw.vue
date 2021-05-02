@@ -73,6 +73,7 @@ export default {
     };
   },
   methods: {
+    // 提交修改密码
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
@@ -86,7 +87,8 @@ export default {
               },
             ])
             .then((res) => {
-              if (res.data.update === 1) {
+              console.log(res);
+              if (res.status == 200 && res.data.update === 1) {
                 this.$message.success("修改密码成功!");
                 this.$refs[formName].resetFields();
               } else {

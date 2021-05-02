@@ -261,7 +261,7 @@ export default {
       //     } else {
       //       this.$message("添加失败");
       //     }
-      //   })
+      //   });
     },
     //第三列  用户名设置为小手
     cellStyle(data) {

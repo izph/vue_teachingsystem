@@ -18,10 +18,9 @@ function startLoading() {
 function endLoading() {
   loading.close();
 }
-// const baseURL = '/api'
+
 let http = axios.create({
   //baseURL: "http://47.94.225.225"
-  //baseURL: baseURL,
   //baseURL: '/api',
   withCredentials: true,
   // timeout: 5000
@@ -30,20 +29,11 @@ let http = axios.create({
 //请求拦截器
 http.interceptors.request.use(config => {
   startLoading();
-  // config.headers.token = localStorage.getItem("token");
-  //console.log(config.headers.token)
-  //config.headers.Accept = "text/html,application/json";
   return config;
 }, error => {
   return Promise.reject(error);
 });
 
-// axios.interceptors.request.use(config => {
-//   startLoading();
-//   return config;
-// }, error => {
-//   return Promise.reject(error);
-// });
 
 //响应拦截器
 http.interceptors.response.use(res => {

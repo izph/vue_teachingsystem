@@ -1,4 +1,5 @@
 <template>
+  <!-- 系统首页 -->
   <div class="home">
     <div class="container">
       <el-row :gutter="45">
@@ -14,7 +15,7 @@
         <el-col :span="6"
           ><div class="grid-content bg-purple">
             <div><img src="../../assets/2.png" alt="" /></div>
-            <div class="item-font" @click="toAnnouncement">
+            <div class="item-font">
               <p>通知公告</p>
               <p>20</p>
             </div>
@@ -49,11 +50,7 @@
 <script>
 export default {
   name: "Home",
-  methods: {
-    toAnnouncement() {
-      this.$router.push("/admin/announcement");
-    },
-  },
+  methods: {},
 };
 </script>
 

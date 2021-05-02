@@ -444,7 +444,7 @@ export default {
       value = value + "";
       let that = this;
       await this.$http
-        .post(`/api/cms/stu/1?_method=GET&class_no=${value}`)
+        .post(`/cms/stu/1?_method=GET&class_no=${value}`)
         .then((res) => {
           console.log(res);
           if (res.status === 200) {
@@ -464,7 +464,7 @@ export default {
 
     async getClassName() {
       await this.$http
-        .post("/api/cms/class/1?_method=GET&class_no=")
+        .post("/cms/class/1?_method=GET&class_no=")
         .then((res) => {
           console.log(res);
           if (res.status === 200) {
@@ -492,11 +492,11 @@ export default {
       this.value = "";
       let that = this;
       await this.$http
-        .post("/api/cms/stu/1?_method=GET&pagenum=1&pagesize=10")
+        .post("/cms/stu/1?_method=GET&pagenum=1&pagesize=10")
         .then((res) => {
           console.log(res);
         });
-      await this.$http.post("/api/cms/stu/1?_method=GET").then((res) => {
+      await this.$http.post("/cms/stu/1?_method=GET").then((res) => {
         console.log(res);
         if (res.status === 200) {
           this.allstudent = res.data.data;
@@ -543,7 +543,7 @@ export default {
         // 可以发起添加用户的网络请求
         console.log(this.addForm);
         this.$http
-          .post("/api/api/cms/stu/1?_method=POST", [
+          .post("/cms/stu/1?_method=POST", [
             {
               student_name: this.addForm.student_name,
               student_no: this.addForm.student_no,
@@ -569,7 +569,7 @@ export default {
     // 删除学生
     removeStudent(id) {
       console.log(id);
-      this.$http.post(`/api/cms/stu/1?_method=DELETE&id=${id}`).then((res) => {
+      this.$http.post(`/cms/stu/1?_method=DELETE&id=${id}`).then((res) => {
         console.log(res);
         this.$message({
           message: "删除学生信息成功",
@@ -602,7 +602,7 @@ export default {
       var cla_no = this.searchClassNo(row.class_name);
       //console.log(cla_no);
       await this.$http
-        .post(`/api/cms/stu/1?_method=GET&student_no=${stu_no}`)
+        .post(`/cms/stu/1?_method=GET&student_no=${stu_no}`)
         .then((res) => {
           console.log(res);
           if (res.status === 200) {
@@ -629,7 +629,7 @@ export default {
         // 发起修改学生信息的数据请求
         //console.log(this.editForm);
         this.$http
-          .post("/api/cms/stu/1?_method=POST", [
+          .post("/cms/stu/1?_method=POST", [
             {
               student_name: this.editForm.student_name,
               student_no: this.editForm.student_no,
@@ -660,7 +660,7 @@ export default {
       console.log(value);
 
       await this.$http
-        .post(`/api/cms/stu/1?_method=GET&student_no=${value}`)
+        .post(`/cms/stu/1?_method=GET&student_no=${value}`)
         .then((res) => {
           console.log(res);
           if (res.status === 200) {

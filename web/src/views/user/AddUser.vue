@@ -22,16 +22,7 @@
         <el-form-item label="备注" prop="remark">
           <el-input v-model="form.remark" />
         </el-form-item>
-        <!-- <el-form-item label="备注">
-        <el-select v-model="form.remark" placeholder="备注" style="width: 100%">
-          <el-option
-            v-for="item in remarkInfo"
-            :key="item.id"
-            :label="item.remark"
-            :value="item.remark"
-          ></el-option>
-        </el-select>
-      </el-form-item> -->
+
         <center>
           <el-button type="primary" @click="onSubmit">添加</el-button>
           <el-button @click="resetForm('form')">重置</el-button>

@@ -473,7 +473,7 @@ export default {
     // 获取班级
     async getClassName() {
       await this.$http
-        .post("/api/cms/class/1?_method=GET&class_no=")
+        .post("/cms/class/1?_method=GET&class_no=")
         .then((res) => {
           if (res.status === 200) {
             var list = res.data.data;
@@ -495,7 +495,7 @@ export default {
       value = value + "";
       let that = this;
       await this.$http
-        .post(`/api/cms/grade/1?_method=GET&course_no=${value}`)
+        .post(`/cms/grade/1?_method=GET&course_no=${value}`)
         .then((res) => {
           console.log(res);
           if (res.status === 200) {
@@ -517,7 +517,7 @@ export default {
     },
 
     async getCourseName() {
-      await this.$http.post("/api/cms/curs/1?_method=GET").then((res) => {
+      await this.$http.post("/cms/curs/1?_method=GET").then((res) => {
         console.log(res);
         if (res.status === 200) {
           var list = res.data.data;
@@ -543,7 +543,7 @@ export default {
     async getStudentList() {
       this.value = "";
       let that = this;
-      await this.$http.post("/api/cms/grade/1?_method=GET").then((res) => {
+      await this.$http.post("/cms/grade/1?_method=GET").then((res) => {
         console.log(res);
         if (res.status === 200) {
           this.allgrade = res.data.data;
@@ -597,7 +597,7 @@ export default {
     // 删除学生
     removeStudent(id) {
       console.log(id);
-      this.$http.post(`/api/cms/stu/1?_method=DELETE&id=${id}`).then((res) => {
+      this.$http.post(`/cms/stu/1?_method=DELETE&id=${id}`).then((res) => {
         console.log(res);
         this.$message({
           message: "删除学生信息成功",
@@ -645,7 +645,7 @@ export default {
         // 发起修改学生信息的数据请求
         var coursenum = this.editForm.course_no;
         this.$http
-          .post("/api/cms/grade/1?_method=POST", [
+          .post("/cms/grade/1?_method=POST", [
             {
               student_no: this.editForm.student_no,
               course_no: this.editForm.course_no,
@@ -677,7 +677,7 @@ export default {
       console.log(value);
       //&course_no=
       await this.$http
-        .post(`/api/cms/grade/1?_method=GET&student_no=${value}`)
+        .post(`/cms/grade/1?_method=GET&student_no=${value}`)
         .then((res) => {
           console.log(res);
           if (res.status === 200) {
