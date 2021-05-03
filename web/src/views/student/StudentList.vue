@@ -3,9 +3,7 @@
     <!-- 面包屑导航区域 -->
     <div class="breadcrumb">
       <el-breadcrumb separator-class="el-icon-arrow-right">
-        <el-breadcrumb-item :to="{ path: '/admin/index' }"
-          >首页</el-breadcrumb-item
-        >
+        <el-breadcrumb-item :to="{ path: '/admin/index' }">首页</el-breadcrumb-item>
         <el-breadcrumb-item>学生信息管理</el-breadcrumb-item>
         <el-breadcrumb-item :to="{ path: '/admin/student/list' }"
           >学生信息列表</el-breadcrumb-item
@@ -32,13 +30,9 @@
           </el-input>
         </el-col>
         <el-col :span="12">
-          <el-button type="primary" @click="addDialogVisible = true"
-            >添加学生</el-button
-          >
+          <el-button type="primary" @click="addDialogVisible = true">添加学生</el-button>
           <el-button type="success" @click="outExcel()">导出数据</el-button>
-          <el-button type="danger" @click="getStudentList()"
-            >显示所有学生</el-button
-          >
+          <el-button type="danger" @click="getStudentList()">显示所有学生</el-button>
 
           <el-select
             v-model="value"
@@ -60,13 +54,7 @@
       </el-row>
 
       <!-- 用户列表区域 -->
-      <el-table
-        :data="studentlist"
-        border
-        stripe
-        current-row-key
-        id="out-table"
-      >
+      <el-table :data="studentlist" border stripe current-row-key id="out-table">
         <el-table-column
           type="index"
           align="center"
@@ -226,6 +214,7 @@
       :append-to-body="true"
     >
       <!-- 内容主体区域 -->
+
       <el-form
         :model="addForm"
         :rules="addFormRules"
@@ -233,6 +222,7 @@
         label-width="70px"
       >
         <el-form-item label="姓名" prop="student_name">
+
           <el-input v-model="addForm.student_name"></el-input>
         </el-form-item>
         <el-form-item label="学号" prop="student_no">
@@ -463,6 +453,7 @@ export default {
     },
 
     async getClassName() {
+
       await this.$http
         .post("/cms/class/1?_method=GET&class_no=")
         .then((res) => {
@@ -475,18 +466,18 @@ export default {
               class_list[index] = {};
               class_options[index] = {};
 
-              class_list[index].text = item.class_name;
-              class_list[index].value = item.class_name;
+            class_list[index].text = item.class_name;
+            class_list[index].value = item.class_name;
 
-              class_options[index].class_no = item.class_no;
-              class_options[index].class_name = item.class_name;
-            });
-            this.classlist = class_list;
-            this.options = class_options;
-            // console.log(this.classlist);
-            // console.log(this.options);
-          }
-        });
+            class_options[index].class_no = item.class_no;
+            class_options[index].class_name = item.class_name;
+          });
+          this.classlist = class_list;
+          this.options = class_options;
+          // console.log(this.classlist);
+          // console.log(this.options);
+        }
+      });
     },
     async getStudentList() {
       this.value = "";
@@ -563,7 +554,8 @@ export default {
             this.getStudentList();
             // 提示修改成功
             this.$message.success("添加学生信息成功！");
-          });
+          })
+          .finally(this.editDialogClosed());
       });
     },
     // 删除学生

@@ -52,13 +52,7 @@
         </el-row>
       </div>
 
-      <el-table
-        :data="studentlist"
-        border
-        stripe
-        current-row-key
-        id="out-table"
-      >
+      <el-table :data="studentlist" border stripe current-row-key id="out-table">
         <el-table-column
           type="index"
           align="center"
@@ -107,9 +101,12 @@
             >
             </el-switch>
           </template> -->
-          <template>
-            <!-- 修改按钮 -->
-            <el-button type="primary" icon="el-icon-notebook-1" size="medium"
+          <template slot-scope="scope">
+            <el-button
+              type="primary"
+              icon="el-icon-notebook-1"
+              size="medium"
+              @click="toAttendence(scope.row)"
               >出勤信息</el-button
             >
 
@@ -118,6 +115,7 @@
               icon="el-icon-notebook-2"
               size="medium"
               style="margin: 0 15px"
+              @click="toInspection(scope.row)"
               >抽查信息</el-button
             >
           </template>
@@ -248,9 +246,7 @@ export default {
             trigger: "blur",
           },
         ],
-        studyno: [
-          { required: true, message: "请输入9位数的学号", trigger: "blur" },
-        ],
+        studyno: [{ required: true, message: "请输入9位数的学号", trigger: "blur" }],
         sex: [{ required: true, trigger: "blur" }],
         rollcall: [
           { required: true, message: "请输入点名信息", trigger: "blur" },
@@ -320,12 +316,13 @@ export default {
       const { data: res3 } = await this.$http.post(
         `/cms/stu/1?_method=GET&class_no=${classno}`
       );
-      const { data: res4 } = await this.$http.post(
-        `/cms/coursetime/1?_method=GET`
-      );
+
+      const { data: res4 } = await this.$http.post(`/api/cms/coursetime/1?_method=GET`);
+
+
       //console.log(res);
       //console.log(res2);
-      console.log(res4);
+      //console.log(res4);
 
       this.$set(this.coursedetailslist, "academy", res2.data[0].academy);
       this.$set(this.coursedetailslist, "num_of_stu", res2.data[0].num_of_stu);
@@ -341,6 +338,25 @@ export default {
 
     clearStudentList() {
       this.pageInation(this.pagenum, this.pagesize);
+    },
+
+    // 跳转到该课程的出勤情况
+    toAttendence(row) {
+      this.$router.push({
+        name: "CourseAttendence",
+        params: {
+          row: row,
+        },
+      });
+    },
+    // 跳转至该学生的抽查情况
+    toInspection(row) {
+      this.$router.push({
+        name: "CourseInspection",
+        params: {
+          row: row,
+        },
+      });
     },
   },
 };
