@@ -248,7 +248,7 @@ export default {
 
       var data = [...this.sendlist];
       console.log(data);
-      await this.$http.post("/api/cms/stu/1?_method=POST", data).then((res) => {
+      await this.$http.post("/cms/stu/1?_method=POST", data).then((res) => {
         console.log(res);
       });
     },
@@ -267,7 +267,7 @@ export default {
     // 获取班级信息
     async getClassName() {
       await this.$http
-        .post("/api/cms/class/1?_method=GET&class_no=")
+        .post("/cms/class/1?_method=GET&class_no=")
         .then((res) => {
           if (res.status === 200) {
             var list = res.data.data;

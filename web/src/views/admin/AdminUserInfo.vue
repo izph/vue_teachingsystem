@@ -1,7 +1,7 @@
 <template>
   <div class="admin-user-info">
     <div class="title">
-      <h1>个人信息修改</h1>
+      <h1>个人信息</h1>
     </div>
     <el-form
       :model="userInfo"
@@ -15,6 +15,7 @@
           type="text"
           v-model="userInfo.user_name"
           autocomplete="off"
+          disabled
         ></el-input>
       </el-form-item>
 
@@ -27,12 +28,12 @@
         ></el-input>
       </el-form-item>
 
-      <el-form-item>
+      <!-- <el-form-item>
         <el-button type="primary" @click="submitForm('ruleForm')"
           >确认修改</el-button
         >
         <el-button @click="resetForm('ruleForm')">重置</el-button>
-      </el-form-item>
+      </el-form-item> -->
     </el-form>
   </div>
 </template>
@@ -61,7 +62,12 @@ export default {
         ],
         staff_no: [
           { validator: checkUserName, trigger: "blur" },
-          { min: 6, max: 8, message: "教工号在6-8个数字之间", trigger: "blur" },
+          {
+            min: 7,
+            max: 12,
+            message: "教工号在7-12个数字之间",
+            trigger: "blur",
+          },
         ],
       },
     };
@@ -70,17 +76,17 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          this.$http.put("/admin/update", this.userInfo).then((res) => {
-            if (res.data.status) {
-              this.$message.success(res.data.msg);
-              this.$router.push("/admin/index");
-            }
-          });
+          // this.$http.put("/api/cms/user/1?_method=POST", [{}]).then((res) => {
+          //   if (res.data.status) {
+          //     this.$message.success("  添加成功！ ");
+          //     this.$router.push("/admin/index");
+          //   }
+          // });
         }
       });
     },
-    resetForm(formName) {
-      this.$refs[formName].resetFields();
+    resetForm() {
+      this.$refs.ruleForm.resetFields();
     },
   },
   components: {},

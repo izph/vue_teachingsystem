@@ -132,7 +132,7 @@ export default {
       this.teacher = userrow;
       //console.log(userrow);
       await this.$http
-        .post(`/api/cms/curs/1?_method=GET&staff_no=${userrow.staff_no}`)
+        .post(`/cms/curs/1?_method=GET&staff_no=${userrow.staff_no}`)
         .then((res) => {
           if (res.status == 200) {
             var userarr = res.data.data;
@@ -155,7 +155,7 @@ export default {
         });
       //console.log(this.courseTimeList);
       const { data: res } = await this.$http.post(
-        `/api/cms/coursetime/1?_method=GET`
+        `/cms/coursetime/1?_method=GET`
       );
       var courseData = res.data;
       for (var i = 0; i < this.courseTimeList.length; i++) {

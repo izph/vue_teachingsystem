@@ -39,6 +39,7 @@
             filterable
             placeholder="请选择班级"
             style="margin: 0 15px"
+            clearable
             @change="getDesignatedClass(value)"
           >
             <el-option
@@ -213,20 +214,27 @@
       :append-to-body="true"
     >
       <!-- 内容主体区域 -->
-      <el-form :model="addForm" :rules="addFormRules" ref="addFormRef" label-width="70px">
-        <el-form-item label="姓名" prop>
+
+      <el-form
+        :model="addForm"
+        :rules="addFormRules"
+        ref="addFormRef"
+        label-width="70px"
+      >
+        <el-form-item label="姓名" prop="student_name">
+
           <el-input v-model="addForm.student_name"></el-input>
         </el-form-item>
-        <el-form-item label="学号" prop>
+        <el-form-item label="学号" prop="student_no">
           <el-input v-model="addForm.student_no"></el-input>
         </el-form-item>
-        <el-form-item label="性别" prop>
+        <el-form-item label="性别" prop="gender">
           <el-radio-group v-model="addForm.gender">
             <el-radio label="male">男</el-radio>
             <el-radio label="female">女</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="班级" prop>
+        <el-form-item label="班级" prop="class_no">
           <!-- <el-input v-model="addForm.class_no"></el-input> -->
           <el-select v-model="addForm.class_no" placeholder="请选择班级">
             <el-option
@@ -239,19 +247,13 @@
           </el-select>
         </el-form-item>
 
-        <el-form-item label="备注" prop>
+        <el-form-item label="备注" prop="remark">
           <el-input v-model="addForm.remark"></el-input>
         </el-form-item>
-
-        <!-- 班级信息卡 -->
-        <!-- <el-card class="box-card">
-          <div v-for="item in options" :key="item.class_no" class="text item">
-            {{ item.class_name + "---" + item.class_no }}
-          </div>
-        </el-card> -->
       </el-form>
       <!-- 底部区域 -->
       <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="addResetForm()">重置</el-button>
         <el-button @click="addDialogVisible = false">取 消</el-button>
         <el-button type="primary" @click="addStudent">确 定</el-button>
       </span>
@@ -419,7 +421,7 @@ export default {
     pageInation(pagenum, pagesize) {
       pagenum = pagenum ? pagenum : this.pagenum;
       pagesize = pagesize ? pagesize : this.pagesize;
-      this.total = this.allstudent.length - 1;
+      this.total = this.allstudent.length;
       //每次点击更改页码值
       let begin = (this.pagenum - 1) * this.pagesize;
       let end = this.pagenum * this.pagesize;
@@ -432,7 +434,7 @@ export default {
       value = value + "";
       let that = this;
       await this.$http
-        .post(`/api/cms/stu/1?_method=GET&class_no=${value}`)
+        .post(`/cms/stu/1?_method=GET&class_no=${value}`)
         .then((res) => {
           console.log(res);
           if (res.status === 200) {
@@ -451,15 +453,18 @@ export default {
     },
 
     async getClassName() {
-      await this.$http.post("/api/cms/class/1?_method=GET&class_no=").then((res) => {
-        console.log(res);
-        if (res.status === 200) {
-          var list = res.data.data;
-          var class_list = [];
-          var class_options = [];
-          list.forEach(function (item, index) {
-            class_list[index] = {};
-            class_options[index] = {};
+
+      await this.$http
+        .post("/cms/class/1?_method=GET&class_no=")
+        .then((res) => {
+          console.log(res);
+          if (res.status === 200) {
+            var list = res.data.data;
+            var class_list = [];
+            var class_options = [];
+            list.forEach(function (item, index) {
+              class_list[index] = {};
+              class_options[index] = {};
 
             class_list[index].text = item.class_name;
             class_list[index].value = item.class_name;
@@ -475,13 +480,14 @@ export default {
       });
     },
     async getStudentList() {
+      this.value = "";
       let that = this;
       await this.$http
-        .post("/api/cms/stu/1?_method=GET&pagenum=1&pagesize=10")
+        .post("/cms/stu/1?_method=GET&pagenum=1&pagesize=10")
         .then((res) => {
           console.log(res);
         });
-      await this.$http.post("/api/cms/stu/1?_method=GET").then((res) => {
+      await this.$http.post("/cms/stu/1?_method=GET").then((res) => {
         console.log(res);
         if (res.status === 200) {
           this.allstudent = res.data.data;
@@ -518,6 +524,9 @@ export default {
     addDialogClosed() {
       this.$refs.addFormRef.resetFields();
     },
+    addResetForm() {
+      this.$refs.addFormRef.resetFields();
+    },
     // 点击按钮，添加学生
     addStudent() {
       this.$refs.addFormRef.validate(async (valid) => {
@@ -525,7 +534,7 @@ export default {
         // 可以发起添加用户的网络请求
         console.log(this.addForm);
         this.$http
-          .post("/api/cms/stu/1?_method=POST", [
+          .post("/cms/stu/1?_method=POST", [
             {
               student_name: this.addForm.student_name,
               student_no: this.addForm.student_no,
@@ -552,7 +561,7 @@ export default {
     // 删除学生
     removeStudent(id) {
       console.log(id);
-      this.$http.post(`/api/cms/stu/1?_method=DELETE&id=${id}`).then((res) => {
+      this.$http.post(`/cms/stu/1?_method=DELETE&id=${id}`).then((res) => {
         console.log(res);
         this.$message({
           message: "删除学生信息成功",
@@ -585,7 +594,7 @@ export default {
       var cla_no = this.searchClassNo(row.class_name);
       //console.log(cla_no);
       await this.$http
-        .post(`/api/cms/stu/1?_method=GET&student_no=${stu_no}`)
+        .post(`/cms/stu/1?_method=GET&student_no=${stu_no}`)
         .then((res) => {
           console.log(res);
           if (res.status === 200) {
@@ -612,7 +621,7 @@ export default {
         // 发起修改学生信息的数据请求
         //console.log(this.editForm);
         this.$http
-          .post("/api/cms/stu/1?_method=POST", [
+          .post("/cms/stu/1?_method=POST", [
             {
               student_name: this.editForm.student_name,
               student_no: this.editForm.student_no,
@@ -643,7 +652,7 @@ export default {
       console.log(value);
 
       await this.$http
-        .post(`/api/cms/stu/1?_method=GET&student_no=${value}`)
+        .post(`/cms/stu/1?_method=GET&student_no=${value}`)
         .then((res) => {
           console.log(res);
           if (res.status === 200) {

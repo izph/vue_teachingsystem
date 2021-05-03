@@ -1,5 +1,6 @@
 <template>
   <div class="login-container">
+    <!-- 头部logo区域 -->
     <div class="header">
       <div class="logo pull_left">
         <div class="logo-wrap">
@@ -14,6 +15,7 @@
         </div>
       </div>
     </div>
+    <!-- 登录表单验证 -->
     <div class="main">
       <el-form
         ref="loginForm"
@@ -67,12 +69,13 @@
         > -->
 
         <div class="login_hint">
-          <p>账号说明：00000001。</p>
-          <p>密码说明：6LH60uSa。</p>
+          <p>账号说明：教职工号，如000000XX。</p>
+          <p>密码说明：123456。</p>
           <p>如尝试以上密码不能登录，请联系管理员。</p>
         </div>
       </el-form>
     </div>
+    <!-- 底部区域 -->
     <div class="footer">
       <div class="copy">
         <p>
@@ -81,7 +84,7 @@
             <strong>
               <span style="color: #ccc">©</span>
             </strong>
-            华侨大学数学科学学院
+            华侨大学数学科学学院——17信计项目小组
           </strong>
           <br />地址：福建省泉州市丰泽区城华北路269号 &nbsp;邮政编码：362000
           <br />
@@ -145,48 +148,30 @@ export default {
     resetForm() {
       this.$refs.loginForm.resetFields();
     },
-
+    // 登录模块
     handleLogin() {
       // $refs获取页面中所有的设置了ref属性的标签
       this.$refs.loginForm.validate((valid) => {
-        // console.log(valid);
         if (valid) {
-          // this.loading = true;
-          // this.$router.push("/admin/index");
           this.$http
             .post(
-              `/api/cms/login/1?staffno=${this.loginForm.username}&password=${this.loginForm.password}`
+              `/cms/login/1?staffno=${this.loginForm.username}&password=${this.loginForm.password}`
             )
-            //"/api/cms/login/3?staffno=00000001&password=6LH60uSa"     /api/MyWeb/getShopInfox.jsp
+            //  /api/MyWeb/getShopInfox.jsp
             .then((res) => {
-              console.log(res);
+              // console.log(res);
 
-              if (res.status && res.data.state === "true") {
+              if (res.status == 200 && res.data.state === "true") {
                 //执行成功
-                // console.log(res.headers.token);
                 sessionStorage.setItem("staff_no", this.loginForm.username); //保存在本地
-                this.$cookies.set("token", res.headers.token);
-                this.$cookies.set("JSESSIONID", res.headers.jsessionid);
+                this.$cookies.set("token", res.headers.token); //把token保存在本地
+                this.$cookies.set("JSESSIONID", res.headers.jsessionid); //把JSESSIONID保存在本地
 
                 this.$message.success("登录成功!");
                 this.$router.push(`/admin/index`);
                 this.loading = false;
               }
             });
-          // this.$http
-          //   .post("/num/api/admin/login", {
-          //     username: "李老师",
-          //     password: "123456",
-          //   })
-          //   .then((res) => {
-          //     if (res.data.status) {
-          //       //执行成功
-          //       // console.log(res.data.data);
-          //       localStorage.setItem("token", res.data.data); //保存在本地
-          //       this.$message.success("登录成功!");
-          //       this.$router.push("/admin/index");
-          //     }
-          //   });
         } else {
           this.$message.error("error submit!!!!");
           console.log("error submit!!");
@@ -202,11 +187,9 @@ export default {
 <style lang="scss" >
 /* 修复input 背景不协调 和光标变色 */
 /* Detail see https://github.com/PanJiaChen/vue-element-admin/pull/927 */
-
 $bg: #ffffff;
 $light_gray: #000;
 $cursor: #000;
-
 @supports (-webkit-mask: none) and (not (cater-color: $cursor)) {
   .login-container .el-input input {
     color: $cursor;
@@ -259,7 +242,6 @@ $cursor: #000;
     display: inline-block;
     height: 47px;
     width: 75%;
-
     input {
       background: transparent;
       white-space: nowrap;
@@ -269,14 +251,12 @@ $cursor: #000;
       color: $light_gray;
       height: 47px;
       caret-color: $cursor;
-
       // &:-webkit-autofill {
       //   box-shadow: 0 0 0px 1000px $bg inset !important;
       //   -webkit-text-fill-color: $cursor !important;
       // }
     }
   }
-
   .el-form-item {
     border: 1px solid #dedede;
     background: #fff;
@@ -289,7 +269,8 @@ $cursor: #000;
   min-height: 630px;
   width: 100%;
   // background: url(../../img/index_bg.png) no-repeat;
-  background: url(../../assets/huqlogo07.jpg) repeat;
+  background: url(../../assets/hqulogo02.jpg) no-repeat;
+  background-size: 1;
   position: relative;
   .el-input__inner {
     margin-left: 20px;
@@ -334,13 +315,11 @@ b {
 $bg: #fff;
 $dark_gray: #889aa4;
 $light_gray: #eee;
-
 .login-container {
   min-height: 100%;
   width: 100%;
   background-color: $bg;
   overflow: hidden;
-
   .login-form {
     /* position: relative;
     width: 520px;
@@ -360,19 +339,16 @@ $light_gray: #eee;
     padding: 10px 40px;
     box-sizing: content-box;
   }
-
   .tips {
     font-size: 14px;
     color: #000;
     margin-bottom: 10px;
-
     span {
       &:first-of-type {
         margin-right: 16px;
       }
     }
   }
-
   .svg-container {
     padding: 6px 5px 6px 15px;
     color: $dark_gray;
@@ -380,7 +356,6 @@ $light_gray: #eee;
     width: 30px;
     display: inline-block;
   }
-
   .title-container {
     text-align: center;
     height: 35px;
@@ -388,7 +363,6 @@ $light_gray: #eee;
     // border-bottom: 2px solid #720808;
     border-bottom: 2px solid #24d1f0;
     margin-bottom: 30px;
-
     .title {
       /* font-size: 26px;
       color: $light_gray;

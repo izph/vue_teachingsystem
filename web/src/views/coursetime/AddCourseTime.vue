@@ -113,7 +113,7 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (!valid) return;
         this.$http
-          .post("/api/cms/coursetime/1?_method=POST", [
+          .post("/cms/coursetime/1?_method=POST", [
             {
               course_no: this.ruleForm.course_no,
               weekday: this.ruleForm.weekday,

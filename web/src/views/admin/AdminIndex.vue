@@ -1,6 +1,7 @@
 <template>
   <div class="index-container">
     <div class="layui-layout layui-layout-admin">
+      <!-- 头部区域 -->
       <div class="layui-header">
         <el-button type="prma" @click="logout">退出</el-button>
         <router-link tag="div" class="layui-logo teachingsystem" to="/admin/index"
@@ -29,6 +30,7 @@
                   <el-dropdown-item command="changeadminpassword"
                     >修改密码</el-dropdown-item
                   >
+
                   <el-dropdown-item command="logout">退出登录</el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
@@ -36,6 +38,7 @@
           </li>
         </ul>
       </div>
+      <!-- 左边导航栏 -->
       <div class="layui-side layui-bgc">
         <div class="layui-side-scroll">
           <el-menu
@@ -44,43 +47,11 @@
             active-text-color="#66ccff"
             router
           >
-            <!-- <el-submenu index="1">
-              <template slot="title"
-                ><i class="el-icon-menu"></i>第二学期</template
-              >
-              
-              <el-menu-item-group>
-                <el-menu-item
-                  index="/admin/student/info"
-                  v-for="item in courselist"
-                  :key="item.id"
-                  >{{ item.coursename + item.grade }}</el-menu-item
-                >
-              </el-menu-item-group>
-            </el-submenu> -->
-
-            <!-- <el-submenu index="2">
-              <template slot="title"
-                ><i class="el-icon-menu"></i>第一学期</template
-              >
-              
-              <el-menu-item-group>
-                <el-menu-item index="/admin/course/info">
-                  班级信息
-                </el-menu-item>
-                <el-menu-item index="/admin/course/info"> 点名 </el-menu-item>
-                <el-menu-item index="/admin/course/info"> 抽查 </el-menu-item>
-              </el-menu-item-group>
-            </el-submenu> -->
-
-            <el-submenu index="3">
+            <el-submenu index="1">
               <template slot="title"
                 ><i class="el-icon-s-custom"></i>用户信息管理</template
               >
-              <!-- <el-menu-item-group>
-                <el-menu-item index="/admin/change/pw">修改密码</el-menu-item>
-                <el-menu-item index="/admin/info">修改资料</el-menu-item>
-              </el-menu-item-group> -->
+
               <el-menu-item-group>
                 <el-menu-item index="/admin/user/info">
                   <i class="el-icon-s-unfold"></i>
@@ -93,7 +64,7 @@
               </el-menu-item-group>
             </el-submenu>
 
-            <el-submenu index="4">
+            <el-submenu index="2">
               <template slot="title"
                 ><i class="el-icon-s-custom"></i>学生信息管理</template
               >
@@ -113,7 +84,7 @@
               </el-menu-item-group>
             </el-submenu>
 
-            <el-submenu index="5">
+            <el-submenu index="3">
               <template slot="title"
                 ><i class="el-icon-s-platform"></i>成绩信息管理</template
               >
@@ -133,7 +104,7 @@
               </el-menu-item-group>
             </el-submenu>
 
-            <el-submenu index="6">
+            <el-submenu index="4">
               <template slot="title"
                 ><i class="el-icon-s-order"></i>课程信息管理</template
               >
@@ -157,12 +128,12 @@
               </el-menu-item-group>
             </el-submenu>
 
-            <el-submenu index="7">
-              <template slot="title"><i class="el-icon-menu"></i>上课时间管理</template>
-              <!-- <el-menu-item-group>
-                <el-menu-item index="/admin/change/pw">修改密码</el-menu-item>
-                <el-menu-item index="/admin/info">修改资料</el-menu-item>
-              </el-menu-item-group> -->
+            <el-submenu index="5">
+              <template slot="title"
+                ><i class="el-icon-menu"></i>上课时间管理</template
+              >
+
+              
               <el-menu-item-group>
                 <!-- <el-menu-item index="/admin/coursetime/time">
                   <i class="el-icon-menu"></i>
@@ -175,12 +146,13 @@
               </el-menu-item-group>
             </el-submenu>
 
-            <el-submenu index="8">
-              <template slot="title"><i class="el-icon-s-data"></i>班级信息管理</template>
-              <!-- <el-menu-item-group>
-                <el-menu-item index="/admin/change/pw">修改密码</el-menu-item>
-                <el-menu-item index="/admin/info">修改资料</el-menu-item>
-              </el-menu-item-group> -->
+
+            <el-submenu index="6">
+              <template slot="title"
+                ><i class="el-icon-s-data"></i>班级信息管理</template
+              >
+
+             
               <el-menu-item-group>
                 <el-menu-item index="/admin/class/info">
                   <i class="el-icon-s-unfold"></i>
@@ -193,7 +165,7 @@
               </el-menu-item-group>
             </el-submenu>
 
-            <el-submenu index="9">
+            <el-submenu index="7">
               <template slot="title"
                 ><i class="el-icon-s-tools"></i>抽查信息管理</template
               >
@@ -206,7 +178,7 @@
               </el-menu-item-group>
             </el-submenu>
 
-            <el-submenu index="10">
+            <el-submenu index="8">
               <template slot="title"
                 ><i class="el-icon-s-promotion"></i>出勤信息管理</template
               >
@@ -221,6 +193,7 @@
           </el-menu>
         </div>
       </div>
+      <!-- 右边内容展示区 -->
       <div class="layui-body">
         <router-view :userInfo="userInfo" :key="$route.path" :classlist="classlist" />
 
@@ -265,21 +238,17 @@ export default {
       classlist: [],
     };
   },
-  mounted() {
-    //this.getCourseList();
-    // console.log(data);
-    // this.getdataList();
-  },
+
   methods: {
+    // 获取用户备注
     async getUserRemark() {
       var sta_no = sessionStorage.getItem("staff_no");
-      console.log(sta_no);
+      // console.log(sta_no);
       await this.$http.post("/api/cms/user/1?_method=GET").then((res) => {
         var userdata = res.data.data;
         var useritem = userdata.filter(function (item) {
           return item.staff_no == sta_no;
         });
-
         sessionStorage.setItem("remark", useritem[0].remark);
       });
     },
@@ -310,7 +279,7 @@ export default {
     //请求当前用户信息
     async fetchUserInfo() {
       var users = sessionStorage.getItem("staff_no");
-      await this.$http.post("/api/cms/user/1?_method=GET").then((res) => {
+      await this.$http.post("/cms/user/1?_method=GET").then((res) => {
         if (res.status === 200) {
           this.userlist = res.data;
           this.userInfo = this.userlist.data.filter(function (item) {
@@ -319,16 +288,18 @@ export default {
           // this.$store.state.user = this.userInfo;
           sessionStorage.setItem("user_name", this.userInfo.user_name); //保存在本地
           //sessionStorage.setItem("staff_no", this.userInfo.staff_no); //保存在本地
-          // console.log(sessionStorage.getItem("staff_no"));
-          // console.log(sessionStorage.getItem("user_name"));
         }
       });
     },
+    // 获取班级信息
     async getClassName() {
-      await this.$http.post("/api/cms/class/1?_method=GET&class_no=").then((res) => {
-        if (res.status === 200) {
-          var list = res.data.data;
-          var class_list = [];
+
+      await this.$http
+        .post("/cms/class/1?_method=GET&class_no=")
+        .then((res) => {
+          if (res.status === 200) {
+            var list = res.data.data;
+            var class_list = [];
 
           list.forEach(function (item, index) {
             class_list[index] = {};
@@ -337,7 +308,7 @@ export default {
             class_list[index].label = item.class_name;
           });
           this.classlist = class_list;
-          console.log(this.classlist);
+          
         }
       });
     },
@@ -388,10 +359,7 @@ export default {
 .layui-header {
   background-color: #304156;
 }
-.layui-side-scroll {
-  .el-menu-item {
-  }
-}
+
 .el-submenu {
   padding: 0 20px 0 0 !important;
   i {
