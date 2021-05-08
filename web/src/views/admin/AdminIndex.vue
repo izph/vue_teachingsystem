@@ -4,7 +4,10 @@
       <!-- 头部区域 -->
       <div class="layui-header">
         <el-button type="prma" @click="logout">退出</el-button>
-        <router-link tag="div" class="layui-logo teachingsystem" to="/admin/index"
+        <router-link
+          tag="div"
+          class="layui-logo teachingsystem"
+          to="/admin/index"
           >教学管理系统
         </router-link>
         <ul class="layui-nav layui-layout-right">
@@ -25,7 +28,9 @@
                   }}<i class="el-icon-arrow-down el-icon--right"></i>
                 </span>
                 <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item command="personInfo">个人信息</el-dropdown-item>
+                  <el-dropdown-item command="personInfo"
+                    >个人信息</el-dropdown-item
+                  >
 
                   <el-dropdown-item command="changeadminpassword"
                     >修改密码</el-dropdown-item
@@ -133,7 +138,6 @@
                 ><i class="el-icon-menu"></i>上课时间管理</template
               >
 
-              
               <el-menu-item-group>
                 <!-- <el-menu-item index="/admin/coursetime/time">
                   <i class="el-icon-menu"></i>
@@ -146,13 +150,11 @@
               </el-menu-item-group>
             </el-submenu>
 
-
             <el-submenu index="6">
               <template slot="title"
                 ><i class="el-icon-s-data"></i>班级信息管理</template
               >
 
-             
               <el-menu-item-group>
                 <el-menu-item index="/admin/class/info">
                   <i class="el-icon-s-unfold"></i>
@@ -164,38 +166,16 @@
                 </el-menu-item> -->
               </el-menu-item-group>
             </el-submenu>
-
-            <el-submenu index="7">
-              <template slot="title"
-                ><i class="el-icon-s-tools"></i>抽查信息管理</template
-              >
-
-              <el-menu-item-group>
-                <el-menu-item index="/admin/inspection/info">
-                  <i class="el-icon-s-unfold"></i>
-                  学生抽查信息
-                </el-menu-item>
-              </el-menu-item-group>
-            </el-submenu>
-
-            <el-submenu index="8">
-              <template slot="title"
-                ><i class="el-icon-s-promotion"></i>出勤信息管理</template
-              >
-
-              <el-menu-item-group>
-                <el-menu-item index="/admin/attendance/info">
-                  <i class="el-icon-s-unfold"></i>
-                  学生出勤信息
-                </el-menu-item>
-              </el-menu-item-group>
-            </el-submenu>
           </el-menu>
         </div>
       </div>
       <!-- 右边内容展示区 -->
       <div class="layui-body">
-        <router-view :userInfo="userInfo" :key="$route.path" :classlist="classlist" />
+        <router-view
+          :userInfo="userInfo"
+          :key="$route.path"
+          :classlist="classlist"
+        />
 
         <!-- 回到顶部代码 -->
         <el-backtop target=".layui-body" :bottom="100">
@@ -244,7 +224,7 @@ export default {
     async getUserRemark() {
       var sta_no = sessionStorage.getItem("staff_no");
       // console.log(sta_no);
-      await this.$http.post("/api/cms/user/1?_method=GET").then((res) => {
+      await this.$http.post("/cms/user/1?_method=GET").then((res) => {
         var userdata = res.data.data;
         var useritem = userdata.filter(function (item) {
           return item.staff_no == sta_no;
@@ -293,7 +273,6 @@ export default {
     },
     // 获取班级信息
     async getClassName() {
-
       await this.$http
         .post("/cms/class/1?_method=GET&class_no=")
         .then((res) => {
@@ -301,16 +280,15 @@ export default {
             var list = res.data.data;
             var class_list = [];
 
-          list.forEach(function (item, index) {
-            class_list[index] = {};
+            list.forEach(function (item, index) {
+              class_list[index] = {};
 
-            class_list[index].value = item.class_no;
-            class_list[index].label = item.class_name;
-          });
-          this.classlist = class_list;
-          
-        }
-      });
+              class_list[index].value = item.class_no;
+              class_list[index].label = item.class_name;
+            });
+            this.classlist = class_list;
+          }
+        });
     },
   },
   created() {

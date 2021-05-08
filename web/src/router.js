@@ -47,24 +47,14 @@ const router = new Router({
           component: () => import("./views/admin/AdminUserInfo.vue"),
           meta: { identity: "admin" },
         },
-        {
-          path: "/admin/student/info",
-          name: "StudentInfo",
-          component: () => import("./views/admin/StudentInfo.vue"),
-          meta: { identity: "admin" },
-        },
+
         {
           path: "/admin/change/pw",
           name: "ChangeAdminPw",
           component: () => import("./views/admin/ChangeAdminPw.vue"),
           meta: { identity: "admin" },
         },
-        {
-          path: "/admin/course/info",
-          name: "CourseInfo",
-          component: () => import("./views/course/CourseInfo.vue"),
-          meta: { identity: "admin" },
-        },
+
         {
           path: "/admin/course/details",
           name: "CourseDetails",
@@ -183,18 +173,8 @@ const router = new Router({
           component: () => import("./views/coursetime/AddCourseTime.vue"),
           meta: { identity: "admin" },
         },
-        {
-          path: "/admin/inspection/info",
-          name: "InspectionInfo",
-          component: () => import("./views/inspection/InspectionInfo.vue"),
-          meta: { identity: "admin" },
-        },
-        {
-          path: "/admin/attendance/info",
-          name: "AttendanceInfo",
-          component: () => import("./views/attendance/AttendanceInfo.vue"),
-          meta: { identity: "admin" },
-        },
+
+
       ],
     },
 

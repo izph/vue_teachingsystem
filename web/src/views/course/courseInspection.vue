@@ -59,7 +59,7 @@ export default {
       // console.log(this.coursedetailslInfo);
       await this.$http
         .post(
-          `/api/cms/inspect/1?_method=GET&course_no=${this.coursedetailslInfo.course_no}`
+          `/cms/inspect/1?_method=GET&course_no=${this.coursedetailslInfo.course_no}`
         )
         .then((res) => {
           if (res.status == 200) {
@@ -73,7 +73,7 @@ export default {
     async searchInspectionbyStu_no(no) {
       await this.$http
         .post(
-          `/api/cms/inspect/2?_method=GET&course_no=${this.coursedetailslInfo.course_no}&student_no=${this.student_no}`
+          `/cms/inspect/2?_method=GET&course_no=${this.coursedetailslInfo.course_no}&student_no=${this.student_no}`
         )
         .then((res) => {
           if (res.status == 200) {

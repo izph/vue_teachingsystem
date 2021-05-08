@@ -85,7 +85,7 @@ export default {
       // sessionStorage.setItem("class_no", class_no);
       // class_no = sessionStorage.getItem("class_no");
       await this.$http
-        .post(`/api/cms/stu/1?_method=GET&class_no=${class_no}`)
+        .post(`/cms/stu/1?_method=GET&class_no=${class_no}`)
         .then((res) => {
           if (res.status !== 200) {
             return this.error("失败");

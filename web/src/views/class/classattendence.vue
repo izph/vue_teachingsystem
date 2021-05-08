@@ -150,7 +150,7 @@ export default {
     async getAttendence() {
       console.log(this.$route.params.student_no);
       await this.$http
-        .post(`/api/cms/attn/2?_method=GET&student_no=${this.$route.params.student_no}`)
+        .post(`/cms/attn/2?_method=GET&student_no=${this.$route.params.student_no}`)
         .then((res) => {
           if (res.status == 200) {
             this.attendenceData = res.data.data;
@@ -192,7 +192,7 @@ export default {
       console.log(this.editForm);
       this.$set(this.editForm, "remark", "");
       await this.$http
-        .post("/api/cms/attn/2?_method=POST", [
+        .post("/cms/attn/2?_method=POST", [
           {
             student_no: this.editForm.student_no,
             course_no: this.editForm.course_no,

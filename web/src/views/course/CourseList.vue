@@ -13,7 +13,12 @@
         @row-dblclick="handleRowdblclick"
       >
         <el-table-column prop="id" label="ID" align="center" width="50" />
-        <el-table-column prop="course_no" label="课程编号" align="center" height="250" />
+        <el-table-column
+          prop="course_no"
+          label="课程编号"
+          align="center"
+          height="250"
+        />
         <el-table-column
           label="课程名称"
           prop="course_name"
@@ -28,8 +33,18 @@
           :render-header="renderHeader1"
         />
 
-        <el-table-column label="开课时间" prop="start_time" align="center" width="60" />
-        <el-table-column label="结课时间" prop="end_time" align="center" width="60" />
+        <el-table-column
+          label="开课时间"
+          prop="start_time"
+          align="center"
+          width="60"
+        />
+        <el-table-column
+          label="结课时间"
+          prop="end_time"
+          align="center"
+          width="60"
+        />
 
         <!-- <el-table-column
           label="开学时间"
@@ -42,10 +57,26 @@
           </template>
         </el-table-column> -->
 
-        <el-table-column label="学分" align="center" width="100" prop="credit" sortable />
+        <el-table-column
+          label="学分"
+          align="center"
+          width="100"
+          prop="credit"
+          sortable
+        />
         <el-table-column label="学年" align="center" width="100" prop="year" />
-        <el-table-column label="学期" prop="semester" align="center" width="100" />
-        <el-table-column label="上课班级" prop="class_name" align="center" width="150" />
+        <el-table-column
+          label="学期"
+          prop="semester"
+          align="center"
+          width="100"
+        />
+        <el-table-column
+          label="上课班级"
+          prop="class_name"
+          align="center"
+          width="150"
+        />
 
         <el-table-column
           label="成绩是否录入"
@@ -64,7 +95,12 @@
             </el-switch>
           </template>
         </el-table-column>
-        <el-table-column label="课程状态" prop="state" align="center" width="100">
+        <el-table-column
+          label="课程状态"
+          prop="state"
+          align="center"
+          width="100"
+        >
           <template slot-scope="scope">
             <!-- <el-tag
             :type="scope.row.state === 'ing' ? 'success' : 'danger'"
@@ -255,18 +291,20 @@ export default {
     async removeCourse(id) {
       // console.log(id);
 
-      await this.$http.post(`/api/cms/curs/1?_method=DELETE&id=${id}`).then((res) => {
-        console.log(res);
-        this.$message({
-          message: "删除课程信息成功",
-          type: "success",
-        });
+      await this.$http
+        .post(`/cms/curs/1?_method=DELETE&id=${id}`)
+        .then((res) => {
+          console.log(res);
+          this.$message({
+            message: "删除课程信息成功",
+            type: "success",
+          });
 
-        // 重新获取用户列表数据
-        this.getCourseList();
-        this.pagenum = 1;
-        this.pageInation(this.pagenum, this.pagesize);
-      });
+          // 重新获取用户列表数据
+          this.getCourseList();
+          this.pagenum = 1;
+          this.pageInation(this.pagenum, this.pagesize);
+        });
     },
     renderHeader(h, { column }) {
       // h即为cerateElement的简写，具体可看vue官方文档

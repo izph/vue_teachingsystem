@@ -3,7 +3,9 @@
     <!-- 面包屑导航区域 -->
     <div class="breadcrumb">
       <el-breadcrumb separator-class="el-icon-arrow-right">
-        <el-breadcrumb-item :to="{ path: '/admin/index' }">首页</el-breadcrumb-item>
+        <el-breadcrumb-item :to="{ path: '/admin/index' }"
+          >首页</el-breadcrumb-item
+        >
         <el-breadcrumb-item>学生信息管理</el-breadcrumb-item>
         <el-breadcrumb-item :to="{ path: '/admin/student/list' }"
           >学生信息列表</el-breadcrumb-item
@@ -17,22 +19,26 @@
       <el-row :gutter="20">
         <el-col :span="8">
           <el-input
-            placeholder="请输入正确的学号搜索"
-            v-model="queryInfo.query"
+            placeholder="请输入姓名和学号进行搜索"
+            v-model="search"
             clearable
             @clear="clearStudentList"
           >
             <el-button
               slot="append"
               icon="el-icon-search"
-              @click="searchStudentList(queryInfo.query)"
+              @click="doFilter()"
             ></el-button>
           </el-input>
         </el-col>
         <el-col :span="12">
-          <el-button type="primary" @click="addDialogVisible = true">添加学生</el-button>
+          <el-button type="primary" @click="addDialogVisible = true"
+            >添加学生</el-button
+          >
           <el-button type="success" @click="outExcel()">导出数据</el-button>
-          <el-button type="danger" @click="getStudentList()">显示所有学生</el-button>
+          <el-button type="danger" @click="getStudentList()"
+            >显示所有学生</el-button
+          >
 
           <el-select
             v-model="value"
@@ -54,7 +60,13 @@
       </el-row>
 
       <!-- 用户列表区域 -->
-      <el-table :data="studentlist" border stripe current-row-key id="out-table">
+      <el-table
+        :data="studentlist"
+        border
+        stripe
+        current-row-key
+        id="out-table"
+      >
         <el-table-column
           type="index"
           align="center"
@@ -222,7 +234,6 @@
         label-width="70px"
       >
         <el-form-item label="姓名" prop="student_name">
-
           <el-input v-model="addForm.student_name"></el-input>
         </el-form-item>
         <el-form-item label="学号" prop="student_no">
@@ -368,11 +379,15 @@ export default {
       offsetWidth: 0,
       colWidth: 0,
       fixed: false,
+      search: "",
+      filterstudentlist: [],
+      flag: 1,
     };
   },
   mounted() {
     // 计算一共有几页
     this.total = Math.ceil(this.addStudent.length / this.pagesize);
+    this.flag = 1;
     this.pageInation(this.pagenum, this.pagesize);
     // 计算得0时设置为1
     // this.total = this.total == 0 ? 1 : this.total;
@@ -385,7 +400,45 @@ export default {
     //this.getStudentList();
     this.getClassName();
   },
+  computed: {},
+
   methods: {
+    //前端搜索功能需要区分是否检索,因为对应的字段的索引不同
+
+    doFilter() {
+      console.log(this.search);
+      if (this.search == "") {
+        this.$message.warning("查询条件不能为空！");
+        return;
+      }
+      console.log(typeof this.search);
+      var reg = new RegExp(this.search, "g");
+      var sea = parseInt(this.search);
+      console.log(sea);
+      // 模糊搜索  过滤方法filter
+      this.filterstudentlist = this.allstudent.filter(function (data) {
+        return data.student_name.match(reg) || data.student_no.match(reg);
+      });
+      //页面数据改变重新统计数据数量和当前页
+      this.pagenum = 1;
+
+      //渲染表格,根据值
+      //this.studentlist = this.filterstudentlist;
+      this.pageInationFilter(this.pagenum, this.pagesize);
+      this.flag = 2;
+      //页面初始化数据需要判断是否检索过
+      //this.flag = true;
+    },
+    pageInationFilter(pagenum, pagesize) {
+      pagenum = pagenum ? pagenum : this.pagenum;
+      pagesize = pagesize ? pagesize : this.pagesize;
+      this.total = this.filterstudentlist.length;
+      //每次点击更改页码值
+      let begin = (this.pagenum - 1) * this.pagesize;
+      let end = this.pagenum * this.pagesize;
+      this.studentlist = this.filterstudentlist.slice(begin, end);
+    },
+
     outExcel() {
       console.log(1);
       /* out-table关联导出的dom节点  */
@@ -410,13 +463,21 @@ export default {
     handleSizeChange(newSize) {
       this.pagesize = newSize;
       this.pagenum = 1;
-      this.pageInation(this.pagenum, this.pagesize);
+      if (this.flag == 1) {
+        this.pageInation(this.pagenum, this.pagesize);
+      } else if (this.flag == 2) {
+        this.pageInationFilter(this.pagenum, this.pagesize);
+      }
     },
 
     // 监听 页码值 改变的事件
     handleCurrentChange(newPage) {
       this.pagenum = newPage;
-      this.pageInation(this.pagenum, this.pagesize);
+      if (this.flag == 1) {
+        this.pageInation(this.pagenum, this.pagesize);
+      } else if (this.flag == 2) {
+        this.pageInationFilter(this.pagenum, this.pagesize);
+      }
     },
     pageInation(pagenum, pagesize) {
       pagenum = pagenum ? pagenum : this.pagenum;
@@ -453,7 +514,6 @@ export default {
     },
 
     async getClassName() {
-
       await this.$http
         .post("/cms/class/1?_method=GET&class_no=")
         .then((res) => {
@@ -466,22 +526,23 @@ export default {
               class_list[index] = {};
               class_options[index] = {};
 
-            class_list[index].text = item.class_name;
-            class_list[index].value = item.class_name;
+              class_list[index].text = item.class_name;
+              class_list[index].value = item.class_name;
 
-            class_options[index].class_no = item.class_no;
-            class_options[index].class_name = item.class_name;
-          });
-          this.classlist = class_list;
-          this.options = class_options;
-          // console.log(this.classlist);
-          // console.log(this.options);
-        }
-      });
+              class_options[index].class_no = item.class_no;
+              class_options[index].class_name = item.class_name;
+            });
+            this.classlist = class_list;
+            this.options = class_options;
+            // console.log(this.classlist);
+            // console.log(this.options);
+          }
+        });
     },
     async getStudentList() {
       this.value = "";
       let that = this;
+      this.flag = 1;
       await this.$http
         .post("/cms/stu/1?_method=GET&pagenum=1&pagesize=10")
         .then((res) => {
@@ -571,6 +632,7 @@ export default {
         // 重新获取用户列表数据
         this.getStudentList();
         this.pagenum = 1;
+        this.flag == 1;
         this.pageInation(this.pagenum, this.pagesize);
       });
     },
@@ -646,6 +708,7 @@ export default {
     },
 
     clearStudentList() {
+      this.flag == 1;
       this.pageInation(this.pagenum, this.pagesize);
     },
     async searchStudentList(value) {

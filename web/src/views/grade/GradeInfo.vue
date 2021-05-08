@@ -17,15 +17,15 @@
       <el-row :gutter="20">
         <el-col :span="4">
           <el-input
-            placeholder="请输入正确的学号搜索学生成绩"
-            v-model="queryInfo.query"
+            placeholder="请输入学号、姓名、课程搜索学生成绩"
+            v-model="search"
             clearable
             @clear="clearStudentList"
           >
             <el-button
               slot="append"
               icon="el-icon-search"
-              @click="searchStudentList(queryInfo.query)"
+              @click="doFilter()"
             ></el-button>
           </el-input>
         </el-col>
@@ -313,6 +313,9 @@ export default {
   },
   data() {
     return {
+      search: "",
+      filterstudentlist: [],
+      flag: 1,
       options: [],
       value: "",
       // 获取用户列表的参数对象
@@ -407,6 +410,7 @@ export default {
   mounted() {
     // 计算一共有几页
     // this.total = Math.ceil(this.addStudent.length / this.pagesize);
+    this.flag = 1;
     this.pageInation(this.pagenum, this.pagesize);
   },
 
@@ -416,6 +420,42 @@ export default {
     this.getClassName();
   },
   methods: {
+    //前端搜索功能需要区分是否检索,因为对应的字段的索引不同
+
+    doFilter() {
+      console.log(this.search);
+      if (this.search == "") {
+        this.$message.warning("查询条件不能为空！");
+        return;
+      }
+      console.log(typeof this.search);
+      var reg = new RegExp(this.search, "g");
+
+      // 模糊搜索  过滤方法filter
+      this.filterstudentlist = this.allgrade.filter(function (data) {
+        return (
+          data.student_name.match(reg) ||
+          data.student_no.match(reg) ||
+          data.course_name.match(reg)
+        );
+      });
+      //页面数据改变重新统计数据数量和当前页
+      this.pagenum = 1;
+
+      //渲染表格,根据值
+      //this.studentlist = this.filterstudentlist;
+      this.pageInationFilter(this.pagenum, this.pagesize);
+      this.flag = 2;
+    },
+    pageInationFilter(pagenum, pagesize) {
+      pagenum = pagenum ? pagenum : this.pagenum;
+      pagesize = pagesize ? pagesize : this.pagesize;
+      this.total = this.filterstudentlist.length;
+      //每次点击更改页码值
+      let begin = (this.pagenum - 1) * this.pagesize;
+      let end = this.pagenum * this.pagesize;
+      this.gradeinfo = this.filterstudentlist.slice(begin, end);
+    },
     outExcel() {
       /* out-table关联导出的dom节点  */
       var wb = XLSX.utils.table_to_book(document.querySelector("#out-table"));
@@ -452,13 +492,22 @@ export default {
     handleSizeChange(newSize) {
       this.pagesize = newSize;
       this.pagenum = 1;
-      this.pageInation(this.pagenum, this.pagesize);
+
+      if (this.flag == 1) {
+        this.pageInation(this.pagenum, this.pagesize);
+      } else if (this.flag == 2) {
+        this.pageInationFilter(this.pagenum, this.pagesize);
+      }
     },
 
     // 监听 页码值 改变的事件
     handleCurrentChange(newPage) {
       this.pagenum = newPage;
-      this.pageInation(this.pagenum, this.pagesize);
+      if (this.flag == 1) {
+        this.pageInation(this.pagenum, this.pagesize);
+      } else if (this.flag == 2) {
+        this.pageInationFilter(this.pagenum, this.pagesize);
+      }
     },
     pageInation(pagenum, pagesize) {
       pagenum = pagenum ? pagenum : this.pagenum;
@@ -509,6 +558,7 @@ export default {
           that.gradeinfo = that.allgrade.slice(begin, end);
 
           this.pagenum = 1;
+          this.flag = 1;
           this.pageInation(this.pagenum, this.pagesize);
         });
     },
@@ -551,6 +601,7 @@ export default {
         }
         let begin = (that.pagenum - 1) * that.pagesize;
         let end = that.pagenum * that.pagesize;
+        this.flag = 1;
         that.gradeinfo = that.allgrade.slice(begin, end);
       });
     },
@@ -607,6 +658,7 @@ export default {
         // 重新获取用户列表数据
         this.getStudentList();
         this.pagenum = 1;
+        this.flag = 1;
         this.pageInation(this.pagenum, this.pagesize);
       });
     },
@@ -671,6 +723,7 @@ export default {
     },
 
     clearStudentList() {
+      this.flag = 1;
       this.pageInation(this.pagenum, this.pagesize);
     },
     async searchStudentList(value) {

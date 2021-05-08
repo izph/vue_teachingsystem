@@ -1,9 +1,19 @@
 <template>
   <div>
     <el-table :data="inspectionData" border style="width: 100%">
-      <el-table-column align="center" prop="student_name" label="名字" width="200">
+      <el-table-column
+        align="center"
+        prop="student_name"
+        label="名字"
+        width="200"
+      >
       </el-table-column>
-      <el-table-column align="center" prop="student_no" label="学号" width="200">
+      <el-table-column
+        align="center"
+        prop="student_no"
+        label="学号"
+        width="200"
+      >
       </el-table-column>
       <el-table-column align="center" prop="score" label="抽查得分" width="200">
       </el-table-column>
@@ -11,9 +21,19 @@
       </el-table-column>
       <el-table-column align="center" prop="week" label="周数" width="200">
       </el-table-column>
-      <el-table-column align="center" prop="course_name" label="课程名称" width="250">
+      <el-table-column
+        align="center"
+        prop="course_name"
+        label="课程名称"
+        width="250"
+      >
       </el-table-column>
-      <el-table-column align="center" prop="time_frame" label="上课时段" width="200">
+      <el-table-column
+        align="center"
+        prop="time_frame"
+        label="上课时段"
+        width="200"
+      >
       </el-table-column>
       <!-- <el-table-column label="操作" align="center">
         <template slot-scope="scope">
@@ -38,9 +58,10 @@ export default {
     // 获取学生抽查数据
     async getInspection() {
       console.log(this.$route.params.student_no);
+
       await this.$http
         .post(
-          `/api/cms/inspect/1?_method=GET&student_no=${this.$route.params.student_no}`
+          `/cms/inspect/1?_method=GET&student_no=${this.$route.params.student_no}`
         )
         .then((res) => {
           console.log(res);

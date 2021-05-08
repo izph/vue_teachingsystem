@@ -13,22 +13,46 @@
           </el-input>
         </el-col>
         <el-col :span="12">
-          <el-button type="success" @click="exportExcel('#outData', '出勤信息.xlsx')"
+          <el-button
+            type="success"
+            @click="exportExcel('#outData', '出勤信息.xlsx')"
             >导出数据</el-button
           >
-          <el-button type="danger" @click="getAttendence()">显示所有学生</el-button>
+          <el-button type="danger" @click="getAttendence()"
+            >显示所有学生</el-button
+          >
         </el-col>
       </el-row>
 
       <!-- 用户列表区域 -->
       <el-table :data="AttendenceData" border style="width: 100%" id="outData">
-        <el-table-column align="center" prop="student_name" label="名字" width="150">
+        <el-table-column
+          align="center"
+          prop="student_name"
+          label="名字"
+          width="150"
+        >
         </el-table-column>
-        <el-table-column align="center" prop="student_no" label="学号" width="120">
+        <el-table-column
+          align="center"
+          prop="student_no"
+          label="学号"
+          width="120"
+        >
         </el-table-column>
-        <el-table-column align="center" prop="course_name" label="课程名" width="120">
+        <el-table-column
+          align="center"
+          prop="course_name"
+          label="课程名"
+          width="120"
+        >
         </el-table-column>
-        <el-table-column align="center" prop="weekday" label="上课时间" width="120">
+        <el-table-column
+          align="center"
+          prop="weekday"
+          label="上课时间"
+          width="120"
+        >
         </el-table-column>
         <el-table-column align="center" prop="week" label="周数" width="120">
         </el-table-column>
@@ -92,7 +116,7 @@ export default {
       this.coursedetailslInfo = row;
       await this.$http
         .post(
-          `/api/cms/attn/2?_method=GET&course_no=${this.coursedetailslInfo.course_no}`
+          `/cms/attn/2?_method=GET&course_no=${this.coursedetailslInfo.course_no}`
         )
         .then((res) => {
           if (res.status == 200) {
@@ -107,7 +131,7 @@ export default {
       // console.log(this.coursedetailslInfo.course_no);
       await this.$http
         .post(
-          `/api/cms/attn/2?_method=GET&course_no=${this.coursedetailslInfo.course_no}&student_no=${this.student_no}`
+          `/cms/attn/2?_method=GET&course_no=${this.coursedetailslInfo.course_no}&student_no=${this.student_no}`
         )
         .then((res) => {
           if (res.status == 200) {
@@ -123,9 +147,16 @@ export default {
       /* generate workbook object from table */
       const wb = XLSX.utils.table_to_book(document.querySelector(id));
       /* get binary string as output */
-      const wbout = XLSX.write(wb, { bookType: "xlsx", bookSST: true, type: "array" });
+      const wbout = XLSX.write(wb, {
+        bookType: "xlsx",
+        bookSST: true,
+        type: "array",
+      });
       try {
-        FileSaver.saveAs(new Blob([wbout], { type: "application/octet-stream" }), title);
+        FileSaver.saveAs(
+          new Blob([wbout], { type: "application/octet-stream" }),
+          title
+        );
       } catch (e) {
         if (typeof console !== "undefined") console.log(e, wbout);
       }

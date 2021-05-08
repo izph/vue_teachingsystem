@@ -52,7 +52,13 @@
         </el-row>
       </div>
 
-      <el-table :data="studentlist" border stripe current-row-key id="out-table">
+      <el-table
+        :data="studentlist"
+        border
+        stripe
+        current-row-key
+        id="out-table"
+      >
         <el-table-column
           type="index"
           align="center"
@@ -246,7 +252,9 @@ export default {
             trigger: "blur",
           },
         ],
-        studyno: [{ required: true, message: "请输入9位数的学号", trigger: "blur" }],
+        studyno: [
+          { required: true, message: "请输入9位数的学号", trigger: "blur" },
+        ],
         sex: [{ required: true, trigger: "blur" }],
         rollcall: [
           { required: true, message: "请输入点名信息", trigger: "blur" },
@@ -317,8 +325,9 @@ export default {
         `/cms/stu/1?_method=GET&class_no=${classno}`
       );
 
-      const { data: res4 } = await this.$http.post(`/api/cms/coursetime/1?_method=GET`);
-
+      const { data: res4 } = await this.$http.post(
+        `/cms/coursetime/1?_method=GET`
+      );
 
       //console.log(res);
       //console.log(res2);

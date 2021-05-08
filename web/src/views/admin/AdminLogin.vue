@@ -116,8 +116,8 @@ export default {
     };
     return {
       loginForm: {
-        username: "00000001",
-        password: "123456",
+        username: "",
+        password: "",
       },
       loginRules: {
         username: [
@@ -157,24 +157,20 @@ export default {
             .post(
               `/cms/login/1?staffno=${this.loginForm.username}&password=${this.loginForm.password}`
             )
-            //  /api/MyWeb/getShopInfox.jsp
             .then((res) => {
-              // console.log(res);
-
               if (res.status == 200 && res.data.state === "true") {
-                //执行成功
-                sessionStorage.setItem("staff_no", this.loginForm.username); //保存在本地
-                this.$cookies.set("token", res.headers.token); //把token保存在本地
-                this.$cookies.set("JSESSIONID", res.headers.jsessionid); //把JSESSIONID保存在本地
-
+                // 执行成功
+                sessionStorage.setItem("staff_no", this.loginForm.username); //把教工号保存在浏览器
+                this.$cookies.set("token", res.headers.token); //把token保存在浏览器
+                this.$cookies.set("JSESSIONID", res.headers.jsessionid); //把JSESSIONID保存在浏览器
                 this.$message.success("登录成功!");
+                // 跳转到系统首页
                 this.$router.push(`/admin/index`);
                 this.loading = false;
               }
             });
         } else {
           this.$message.error("error submit!!!!");
-          console.log("error submit!!");
           this.loading = false;
           return false;
         }

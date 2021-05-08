@@ -21,7 +21,9 @@
           </el-select>
         </el-col>
         <el-col :span="12">
-          <el-button type="primary" @click="addBoxVisible = true">添加班级</el-button>
+          <el-button type="primary" @click="addBoxVisible = true"
+            >添加班级</el-button
+          >
           <el-button type="success" @click="getClass()">所有班级</el-button>
         </el-col>
       </el-row>
@@ -33,11 +35,26 @@
         style="width: 100%"
         @row-dblclick="toClassdetailed"
       >
-        <el-table-column align="center" prop="class_id" label="班级ID" width="180">
+        <el-table-column
+          align="center"
+          prop="class_id"
+          label="班级ID"
+          width="180"
+        >
         </el-table-column>
-        <el-table-column align="center" prop="class_name" label="班级名称" width="180">
+        <el-table-column
+          align="center"
+          prop="class_name"
+          label="班级名称"
+          width="180"
+        >
         </el-table-column>
-        <el-table-column align="center" prop="class_no" label="班级编号" width="180">
+        <el-table-column
+          align="center"
+          prop="class_no"
+          label="班级编号"
+          width="180"
+        >
         </el-table-column>
         <el-table-column
           align="center"
@@ -47,9 +64,19 @@
           :filters="[
             { text: '数学科学学院', value: '数学科学学院' },
             { text: '工商管理学院', value: '工商管理学院' },
-            { text: '计算机学院', value: '计算机学院' },
+            { text: '计算机科学与技术学院', value: '计算机科学与技术学院' },
             { text: '工学院', value: '工学院' },
             { text: '经济与金融学院', value: '经济与金融学院' },
+            { text: '医学院', value: '医学院' },
+            { text: '新闻与传播学院', value: '新闻与传播学院' },
+            { text: '体育学院', value: '体育学院' },
+            { text: '法学院', value: '法学院' },
+            { text: '政治与公共管理学院', value: '政治与公共管理学院' },
+            { text: '旅游学院', value: '旅游学院' },
+            { text: '文学院', value: '文学院' },
+            { text: '外国语学院', value: '外国语学院' },
+            { text: '土木工程学院', value: '土木工程学院' },
+            { text: '国际学院', value: '国际学院' },
           ]"
           :filter-method="filterAcademy"
           filter-placement="bottom-end"
@@ -72,17 +99,29 @@
           filter-placement="bottom-end"
         >
         </el-table-column>
-        <el-table-column align="center" prop="num_of_stu" label="学生人数" width="180">
+        <el-table-column
+          align="center"
+          prop="num_of_stu"
+          label="学生人数"
+          width="180"
+        >
         </el-table-column>
-        <el-table-column align="center" prop="remark" label="备注"> </el-table-column>
+        <el-table-column align="center" prop="remark" label="备注">
+        </el-table-column>
         <el-table-column label="编辑" align="center">
           <template slot-scope="scope">
-            <el-button size="mini" @click="editClass(scope.row)">编辑</el-button>
+            <el-button size="mini" @click="editClass(scope.row)"
+              >编辑</el-button
+            >
             <el-popconfirm
               title="确定删除班级吗？"
               @confirm="deleteClass(scope.row.class_id)"
             >
-              <el-button size="mini" type="danger" slot="reference" style="margin: 0 15px"
+              <el-button
+                size="mini"
+                type="danger"
+                slot="reference"
+                style="margin: 0 15px"
                 >删除</el-button
               >
             </el-popconfirm>
@@ -132,7 +171,19 @@
             <el-option label="计算机学院" value="计算机学院"> </el-option>
             <el-option label="工学院" value="工学院"> </el-option>
             <el-option label="工商管理学院" value="工商管理学院"> </el-option>
-            <el-option label="经济与金融学院" value="经济与金融学院"> </el-option>
+            <el-option label="经济与金融学院" value="经济与金融学院">
+            </el-option>
+            <el-option label="医学院" value="医学院"> </el-option>
+            <el-option label="新闻与传播学院" value="新闻与传播学院">
+            </el-option>
+            <el-option label="体育学院" value="体育学院"> </el-option>
+            <el-option label="法学院" value="法学院"> </el-option>
+            <el-option label="政治与公共管理学院" value="政治与公共管理学院">
+            </el-option>
+            <el-option label="旅游学院" value="旅游学院"> </el-option>
+            <el-option label="外国语学院" value="外国语学院"> </el-option>
+            <el-option label="土木工程学院" value="土木工程学院"> </el-option>
+            <el-option label="国际学院" value="国际学院"> </el-option>
           </el-select>
         </el-form-item>
 
@@ -189,7 +240,19 @@
             <el-option label="计算机学院" value="计算机学院"> </el-option>
             <el-option label="工学院" value="工学院"> </el-option>
             <el-option label="工商管理学院" value="工商管理学院"> </el-option>
-            <el-option label="经济与金融学院" value="经济与金融学院"> </el-option>
+            <el-option label="经济与金融学院" value="经济与金融学院">
+            </el-option>
+            <el-option label="医学院" value="医学院"> </el-option>
+            <el-option label="新闻与传播学院" value="新闻与传播学院">
+            </el-option>
+            <el-option label="体育学院" value="体育学院"> </el-option>
+            <el-option label="法学院" value="法学院"> </el-option>
+            <el-option label="政治与公共管理学院" value="政治与公共管理学院">
+            </el-option>
+            <el-option label="旅游学院" value="旅游学院"> </el-option>
+            <el-option label="外国语学院" value="外国语学院"> </el-option>
+            <el-option label="土木工程学院" value="土木工程学院"> </el-option>
+            <el-option label="国际学院" value="国际学院"> </el-option>
           </el-select>
         </el-form-item>
 
@@ -247,8 +310,12 @@ export default {
           { required: true, message: "请输入班级编号", trigger: "blur" },
           { min: 8, max: 8, message: "编号长度为8", trigger: "blur" },
         ],
-        class_name: [{ required: true, message: "请输入班级名称", trigger: "blur" }],
-        num_of_stu: [{ required: true, message: "请输入班级人数", trigger: "blur" }],
+        class_name: [
+          { required: true, message: "请输入班级名称", trigger: "blur" },
+        ],
+        num_of_stu: [
+          { required: true, message: "请输入班级人数", trigger: "blur" },
+        ],
       },
     };
   },
@@ -258,7 +325,7 @@ export default {
   methods: {
     // 获取班级列表
     async getClass() {
-      await this.$http.post("/api/cms/class/1?_method=GET").then((res) => {
+      await this.$http.post("/cms/class/1?_method=GET").then((res) => {
         // console.log(res);
         if (res.status === 200) {
           this.allList = res.data.data;
@@ -272,7 +339,7 @@ export default {
     // 筛选班级
     async selectClass(value) {
       await this.$http
-        .post(`/api/cms/class/1?_method=GET&class_no=${value}`)
+        .post(`/cms/class/1?_method=GET&class_no=${value}`)
         .then((res) => {
           if (res.status === 200) {
             this.currentList = res.data.data;
@@ -287,7 +354,7 @@ export default {
         //发起添加班级的网络请求
         console.log(this.addForm);
         await this.$http
-          .post("/api/cms/class/1?_method=POST", [
+          .post("/cms/class/1?_method=POST", [
             {
               academy: this.addForm.academy,
               class_name: this.addForm.class_name,
@@ -325,7 +392,7 @@ export default {
         //发起修改班级的网络请求
         // console.log(this.editForm);
         await this.$http
-          .post("/api/cms/class/1?_method=POST", [
+          .post("/cms/class/1?_method=POST", [
             {
               academy: this.editForm.academy,
               class_name: this.editForm.class_name,
@@ -356,7 +423,7 @@ export default {
       console.log(row);
       // 发起删除请求
       await this.$http
-        .post(`/api/cms/class/1?_method=DELETE&id=${class_id}`)
+        .post(`/cms/class/1?_method=DELETE&id=${class_id}`)
         .then((res) => {
           this.$message.success("删除成功");
         });
