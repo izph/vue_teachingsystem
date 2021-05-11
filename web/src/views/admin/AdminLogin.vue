@@ -77,7 +77,7 @@
     </div>
     <!-- 底部区域 -->
     <div class="footer">
-      <div class="copy">
+      <!-- <div class="copy">
         <p>
           <strong>
             版权所有
@@ -89,7 +89,7 @@
           <br />地址：福建省泉州市丰泽区城华北路269号 &nbsp;邮政编码：362000
           <br />
         </p>
-      </div>
+      </div> -->
     </div>
   </div>
 </template>
