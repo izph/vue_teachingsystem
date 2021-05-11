@@ -58,7 +58,7 @@ export default {
 .home {
   width: 100%;
   height: 100%;
-  background: url(../../assets/hqulogo07.jpg);
+  /* background: url(../../assets/homebgc.jpg); */
   /* background-size: 100% 100%; */
   background-size: cover;
 }

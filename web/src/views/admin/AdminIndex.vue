@@ -197,7 +197,7 @@
         </el-backtop>
       </div>
       <div class="layui-footer" style="text-align: center">
-        Copyright © 2020-2021 17信计项目小组
+        Copyright © 2020-2021 教学管理系统项目小组
       </div>
     </div>
   </div>

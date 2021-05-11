@@ -5,13 +5,13 @@
       <div class="logo pull_left">
         <div class="logo-wrap">
           <img
-            src="../../assets/hqulogo_05.png"
+            src="../../assets/logo888.png"
             alt="IDS logo"
             title="IDS logo"
             class="logo"
           />
-          <i class="divideline"></i>
-          <span class="title">教学管理系统</span>
+          <!-- <i class="divideline"></i>
+          <span class="title">教学管理系统</span> -->
         </div>
       </div>
     </div>
@@ -77,19 +77,19 @@
     </div>
     <!-- 底部区域 -->
     <div class="footer">
-      <!-- <div class="copy">
+      <div class="copy">
         <p>
           <strong>
             版权所有
             <strong>
               <span style="color: #ccc">©</span>
             </strong>
-            华侨大学数学科学学院——17信计项目小组
+            教学管理项目小组
           </strong>
-          <br />地址：福建省泉州市丰泽区城华北路269号 &nbsp;邮政编码：362000
+          <!-- <br />地址：福建省泉州市丰泽区城华北路269号 &nbsp;邮政编码：362000 -->
           <br />
         </p>
-      </div> -->
+      </div>
     </div>
   </div>
 </template>
@@ -265,7 +265,7 @@ $cursor: #000;
   min-height: 630px;
   width: 100%;
   // background: url(../../img/index_bg.png) no-repeat;
-  background: url(../../assets/hqulogo02.jpg) no-repeat;
+  background: url(../../assets/loginbgc.jpg) no-repeat;
   background-size: 1;
   position: relative;
   .el-input__inner {
