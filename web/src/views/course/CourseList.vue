@@ -292,7 +292,7 @@ export default {
       // console.log(id);
 
       await this.$http
-        .post(`/cms/curs/1?_method=DELETE&id=${id}`)
+        .post(`/api/cms/curs/1?_method=DELETE&id=${id}`)
         .then((res) => {
           console.log(res);
           this.$message({
@@ -334,7 +334,7 @@ export default {
 
     async getCourseList() {
       let that = this;
-      await this.$http.post("/cms/curs/1?_method=GET").then((res) => {
+      await this.$http.post("/api/cms/curs/1?_method=GET").then((res) => {
         console.log(res);
         if (res.status === 200) {
           this.allcourse = res.data.data;
