@@ -315,18 +315,18 @@ export default {
       this.coursedetailslist = row;
 
       const { data: res } = await this.$http.post(
-        `/cms/coursetime/1?_method=GET&course_no=${courseno}`
+        `/api/cms/coursetime/1?_method=GET&course_no=${courseno}`
       );
       const { data: res2 } = await this.$http.post(
-        `/cms/class/1?_method=GET&class_name=${classname}`
+        `/api/cms/class/1?_method=GET&class_name=${classname}`
       );
       var classno = res2.data[0].class_no;
       const { data: res3 } = await this.$http.post(
-        `/cms/stu/1?_method=GET&class_no=${classno}`
+        `/api/cms/stu/1?_method=GET&class_no=${classno}`
       );
 
       const { data: res4 } = await this.$http.post(
-        `/cms/coursetime/1?_method=GET`
+        `/api/cms/coursetime/1?_method=GET`
       );
 
       //console.log(res);

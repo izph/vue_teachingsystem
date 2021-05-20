@@ -61,7 +61,7 @@ export default {
 
       await this.$http
         .post(
-          `/cms/inspect/1?_method=GET&student_no=${this.$route.params.student_no}`
+          `/api/cms/inspect/1?_method=GET&student_no=${this.$route.params.student_no}`
         )
         .then((res) => {
           console.log(res);

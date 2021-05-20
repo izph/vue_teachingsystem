@@ -224,7 +224,7 @@ export default {
     async getUserRemark() {
       var sta_no = sessionStorage.getItem("staff_no");
       // console.log(sta_no);
-      await this.$http.post("/cms/user/1?_method=GET").then((res) => {
+      await this.$http.post("/api/cms/user/1?_method=GET").then((res) => {
         var userdata = res.data.data;
         var useritem = userdata.filter(function (item) {
           return item.staff_no == sta_no;
@@ -259,7 +259,7 @@ export default {
     //请求当前用户信息
     async fetchUserInfo() {
       var users = sessionStorage.getItem("staff_no");
-      await this.$http.post("/cms/user/1?_method=GET").then((res) => {
+      await this.$http.post("/api/cms/user/1?_method=GET").then((res) => {
         if (res.status === 200) {
           this.userlist = res.data;
           this.userInfo = this.userlist.data.filter(function (item) {
@@ -274,7 +274,7 @@ export default {
     // 获取班级信息
     async getClassName() {
       await this.$http
-        .post("/cms/class/1?_method=GET&class_no=")
+        .post("/api/cms/class/1?_method=GET&class_no=")
         .then((res) => {
           if (res.status === 200) {
             var list = res.data.data;

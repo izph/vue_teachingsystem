@@ -155,7 +155,7 @@ export default {
         if (valid) {
           this.$http
             .post(
-              `/cms/login/1?staffno=${this.loginForm.username}&password=${this.loginForm.password}`
+              `/api/cms/login/1?staffno=${this.loginForm.username}&password=${this.loginForm.password}`
             )
             .then((res) => {
               if (res.status == 200 && res.data.state === "true") {

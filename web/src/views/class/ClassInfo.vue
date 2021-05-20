@@ -325,7 +325,7 @@ export default {
   methods: {
     // 获取班级列表
     async getClass() {
-      await this.$http.post("/cms/class/1?_method=GET").then((res) => {
+      await this.$http.post("/api/cms/class/1?_method=GET").then((res) => {
         // console.log(res);
         if (res.status === 200) {
           this.allList = res.data.data;
@@ -339,7 +339,7 @@ export default {
     // 筛选班级
     async selectClass(value) {
       await this.$http
-        .post(`/cms/class/1?_method=GET&class_no=${value}`)
+        .post(`/api/cms/class/1?_method=GET&class_no=${value}`)
         .then((res) => {
           if (res.status === 200) {
             this.currentList = res.data.data;
@@ -354,7 +354,7 @@ export default {
         //发起添加班级的网络请求
         console.log(this.addForm);
         await this.$http
-          .post("/cms/class/1?_method=POST", [
+          .post("/api/cms/class/1?_method=POST", [
             {
               academy: this.addForm.academy,
               class_name: this.addForm.class_name,
@@ -392,7 +392,7 @@ export default {
         //发起修改班级的网络请求
         // console.log(this.editForm);
         await this.$http
-          .post("/cms/class/1?_method=POST", [
+          .post("/api/cms/class/1?_method=POST", [
             {
               academy: this.editForm.academy,
               class_name: this.editForm.class_name,
@@ -423,7 +423,7 @@ export default {
       console.log(row);
       // 发起删除请求
       await this.$http
-        .post(`/cms/class/1?_method=DELETE&id=${class_id}`)
+        .post(`/api/cms/class/1?_method=DELETE&id=${class_id}`)
         .then((res) => {
           this.$message.success("删除成功");
         });

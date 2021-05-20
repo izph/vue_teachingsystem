@@ -79,7 +79,7 @@ export default {
         if (valid) {
           console.log(this.userInfo.passwd);
           this.$http
-            .post("/cms/user/1?_method=POST", [
+            .post("/api/cms/user/1?_method=POST", [
               {
                 user_name: sessionStorage.getItem("user_name"),
                 staff_no: sessionStorage.getItem("staff_no"),

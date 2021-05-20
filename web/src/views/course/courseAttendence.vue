@@ -4,11 +4,11 @@
       <!-- 搜索与添加区域 -->
       <el-row :gutter="20">
         <el-col :span="8">
-          <el-input placeholder="请输入学号搜索" v-model="student_no" clearable>
+          <el-input placeholder="请输入学号或者姓名搜索" v-model="searchData" clearable @clear="clearData()" @keyup.enter.native="searchByno_Or_name(searchData)">
             <el-button
               slot="append"
               icon="el-icon-search"
-              @click="searchAttendencebyStu_no(student_no)"
+              @click="searchByno_Or_name(searchData)"
             ></el-button>
           </el-input>
         </el-col>
@@ -25,7 +25,7 @@
       </el-row>
 
       <!-- 用户列表区域 -->
-      <el-table :data="AttendenceData" border style="width: 100%" id="outData">
+      <el-table :data="CurrentData" border style="width: 100%" id="outData">
         <el-table-column
           align="center"
           prop="student_name"
@@ -100,8 +100,10 @@ export default {
     return {
       //出勤数据
       AttendenceData: [],
-      // 搜索的学号
-      student_no: null,
+      // 当前页面展示的出勤数据
+      CurrentData:[],
+      // 搜索内容
+      searchData: null,
       //课程详细信息
       coursedetailslInfo: {},
     };
@@ -116,29 +118,30 @@ export default {
       this.coursedetailslInfo = row;
       await this.$http
         .post(
-          `/cms/attn/2?_method=GET&course_no=${this.coursedetailslInfo.course_no}`
+          `/api/cms/attn/2?_method=GET&course_no=${this.coursedetailslInfo.course_no}`
         )
         .then((res) => {
           if (res.status == 200) {
             this.AttendenceData = res.data.data;
+            this.CurrentData = this.AttendenceData
             // console.log(this.AttendenceData);
           }
         });
     },
 
-    // 搜索by学号
-    async searchAttendencebyStu_no(no) {
-      // console.log(this.coursedetailslInfo.course_no);
-      await this.$http
-        .post(
-          `/cms/attn/2?_method=GET&course_no=${this.coursedetailslInfo.course_no}&student_no=${this.student_no}`
-        )
-        .then((res) => {
-          if (res.status == 200) {
-            this.AttendenceData = res.data.data;
-            console.log(this.AttendenceData);
-          }
+    //通过学号或姓名搜索
+    searchByno_Or_name(searchData){
+      let chinese_pattern = new RegExp("[\u4E00-\u9FA5]+");
+      // console.log(this.AttendenceData);     
+      let property = chinese_pattern.test(searchData)?"student_name":"student_no";
+      this.CurrentData = this.AttendenceData.filter(item => {
+        return String(item[property]).search(searchData)!= -1;//模糊搜索  
         });
+    },
+
+    // 恢复默认数据
+    clearData(){
+      this.CurrentData = this.AttendenceData;
     },
 
     // 导出出勤数据

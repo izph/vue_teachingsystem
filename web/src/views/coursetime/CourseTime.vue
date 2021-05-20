@@ -118,7 +118,7 @@ export default {
     },
     async getCourseTime() {
       await this.$http
-        .post("/cms/coursetime/1?_method=GET&course_no=")
+        .post("/api/cms/coursetime/1?_method=GET&course_no=")
         .then((res) => {
           this.courseTableData = res.data.data;
           this.total = res.data.total;
